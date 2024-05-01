@@ -87,7 +87,7 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ],
     script: [
-      { src: 'https://hm.baidu.com/hm.js?69ae2b587adb2380abc5e263ee9c0079' }
+      { src: 'https://hm.baidu.com/hm.js?ee5a17b50839a9894186477806feb69c' }
     ]
   },
   /*
@@ -199,21 +199,21 @@ export default {
     "cookie-universal-nuxt",
     // "@nuxtjs/sitemap",
   ],
-  // server:{
-  //   port: 3000,
-  //   host: "0.0.0.0"
+  server:{
+    port: 3000,
+    host: "0.0.0.0"
+  },
+  
+  // axios: {
+  //   prefix: '/v1/',
+  //   proxy: true,
   // },
-
-  axios: {
-    prefix: '/v1/',
-    proxy: true,
-  },
-  proxy: {
-    "/v1/": {
-      changeOrigin: true,
-      target: "http://localhost:8199"
-    }
-  },
+  // proxy: {
+  //   "/v1/": {
+  //     changeOrigin: true,
+  //     target: "http://localhost:8199"
+  //   }
+  // },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/

@@ -68,7 +68,6 @@
 
                                     </div>
                                 </a-col>
-
                             </a-row>
                         </div>
                     </div>
@@ -268,13 +267,18 @@ export default {
                     return "残月"
                 case "World's Edge":
                     return "世界尽头"
+                case "":
+                    return ""
                 default:
                     return "未知"
             }
         },
         resetTime(e){
-            let time = new Date(parseInt(e) * 1000)
-            return  format(addHours(time,2), "MM-dd HH:mm")
+            if (e != "") {
+                let time = new Date(parseInt(e) * 1000)
+                return  format(addHours(time,2), "MM-dd HH:mm")
+            }
+            return  "未知"
         },
     },
     data(){
@@ -380,6 +384,8 @@ export default {
                 case "Broken Moon":
                     return "/img/apex/map/Broken_Moon.png"
                 case "World's Edge":
+                    return "/img/apex/map/Worlds_Edge.png"
+                case "":
                     return "/img/apex/map/Worlds_Edge.png"
                 default:
                     return "未知"

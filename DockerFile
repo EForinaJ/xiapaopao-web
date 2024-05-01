@@ -1,0 +1,10 @@
+FROM node:16.13.0
+MAINTAINER aipaikesi
+# ENV NODE_ENV=production
+ENV HOST 0.0.0.0
+RUN mkdir -p /app
+COPY . /app
+WORKDIR /app
+EXPOSE 3000
+RUN chmod -R 777 /app
+CMD ["npm", "start"]

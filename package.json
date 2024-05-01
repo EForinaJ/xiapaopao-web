@@ -15,6 +15,7 @@
     "@tinymce/tinymce-vue": "^3.2.2",
     "ant-design-vue": "^1.6.5",
     "cookie-universal-nuxt": "^2.1.4",
+    "cross-env": "^7.0.3",
     "date-fns": "^2.16.1",
     "echarts": "^4.9.0",
     "less": "^3.12.2",
