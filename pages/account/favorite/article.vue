@@ -3,7 +3,7 @@
         <div v-if="!loading">
             <div v-if="list.length > 0" class="list">
                 <div v-for="(item,index) in list" :key="index" class="item">
-                    <div @click="goPath(`/wiki/${item.id}`)" class="cover">
+                    <div @click="goPath(`/article/${item.id}`)" class="cover">
                         <img :src="item.cover | resetImage(140,75)" alt="" srcset="">
                     </div>
                     <div class="item-info">
@@ -22,8 +22,8 @@
                                     {{item.createTime | resetData}}
                                 </div>
                             </div>
-                            <h2 class="title"  @click="goPath(`/wiki/${item.id}`)">{{item.title}}</h2>
-                            <p @click="goPath(`/wiki/${item.id}`)" class="desc">
+                            <h2 class="title"  @click="goPath(`/article/${item.id}`)">{{item.title}}</h2>
+                            <p @click="goPath(`/article/${item.id}`)" class="desc">
                                 {{item.description}}
                             </p>
                         </div>
@@ -145,7 +145,7 @@ export default {
             }
         },
         async getList(){
-            const res = await this.$axios.get(api.getAccountFavoriteWikiList,{params: this.query})
+            const res = await this.$axios.get(api.getAccountFavoriteArticleList,{params: this.query})
             if (res.code != 1) {
                 this.$message.error(
                     res.message,

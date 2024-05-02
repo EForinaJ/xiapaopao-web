@@ -193,7 +193,7 @@ export default {
             }
         },
         async getList(){
-            const res = await this.$axios.get(api.getAccountWikiList,{params: this.query})
+            const res = await this.$axios.get(api.getAccountArticleList,{params: this.query})
             if (res.code != 1) {
                 this.$message.error(
                     res.message,

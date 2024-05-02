@@ -40,61 +40,63 @@
                 </div>
                 <div class="content">
                     <div v-if="!loading" class="list">
-                        <div v-for="(item,index) in list" :key="index" class="item">
-                            <div @click="goPath(`/article/${item.id}`)" class="cover">
-                                <img :src="item.cover | resetImage(140,75)" alt="" srcset="">
-                            </div>
-                            <div class="item-info">
-                                <div class="header">
-                                    <div class="user-info-date">
-                                        <div   class="avatar-nickname">
-                                            <div @click="goPath(`/user/${item.userInfo.id}`)" class="avatar">
-                                                <img :src="item.userInfo.avatar" :alt="item.userInfo.nickName" srcset="">
-                                            </div>
-                                            <div class="nickname-grade">
-                                                <h2 @click="goPath(`/user/${item.userInfo.id}`)" class="nickname">{{item.userInfo.nickName}}</h2>
-                                                <!-- <img :src="item.userInfo.grade.icon" alt=""> -->
-                                            </div>
-                                        </div>
-                                        <div class="date">
-                                            {{item.createTime | resetData}}
-                                        </div>
-                                    </div>
-                                    <h2 class="title"  @click="goPath(`/article/${item.id}`)">{{item.title}}</h2>
-                                    <p @click="goPath(`/article/${item.id}`)" class="desc">
-                                        {{item.description}}
-                                    </p>
+                        <div v-if="list.length > 0 && !loading">
+                            <div v-for="(item,index) in list" :key="index" class="item">
+                                <div @click="goPath(`/article/${item.id}`)" class="cover">
+                                    <img :src="item.cover | resetImage(140,75)" alt="" srcset="">
                                 </div>
-                                <div class="footer">
-                                    <div class="tags">
-                                        <div  v-if="item.forum" class="game">
-                                            {{item.forum.title}}
+                                <div class="item-info">
+                                    <div class="header">
+                                        <div class="user-info-date">
+                                            <div   class="avatar-nickname">
+                                                <div @click="goPath(`/user/${item.userInfo.id}`)" class="avatar">
+                                                    <img :src="item.userInfo.avatar" :alt="item.userInfo.nickName" srcset="">
+                                                </div>
+                                                <div class="nickname-grade">
+                                                    <h2 @click="goPath(`/user/${item.userInfo.id}`)" class="nickname">{{item.userInfo.nickName}}</h2>
+                                                    <!-- <img :src="item.userInfo.grade.icon" alt=""> -->
+                                                </div>
+                                            </div>
+                                            <div class="date">
+                                                {{item.createTime | resetData}}
+                                            </div>
                                         </div>
-                                        <div v-if="item.category" class="cate">
-                                            {{item.category.title}}
-                                        </div>
+                                        <h2 class="title"  @click="goPath(`/article/${item.id}`)">{{item.title}}</h2>
+                                        <p @click="goPath(`/article/${item.id}`)" class="desc">
+                                            {{item.description}}
+                                        </p>
                                     </div>
-                                    <div class="date-action">
-                                        <div class="meta">
-                                            <div class="action-btn">
-                                                <a-icon type="eye" />
-                                                <span>{{item.views | resetNum}}</span>
+                                    <div class="footer">
+                                        <div class="tags">
+                                            <div  v-if="item.forum" class="game">
+                                                {{item.forum.title}}
                                             </div>
-                                            <div class="action-btn">
-                                                <a-icon type="heart" />
-                                                <span>{{item.likes | resetNum}}</span>
+                                            <div v-if="item.category" class="cate">
+                                                {{item.category.title}}
                                             </div>
-                                            <div class="action-btn">
-                                                <a-icon type="message" />
-                                                <span>{{item.comments | resetNum}}</span>
+                                        </div>
+                                        <div class="date-action">
+                                            <div class="meta">
+                                                <div class="action-btn">
+                                                    <a-icon type="eye" />
+                                                    <span>{{item.views | resetNum}}</span>
+                                                </div>
+                                                <div class="action-btn">
+                                                    <a-icon type="heart" />
+                                                    <span>{{item.likes | resetNum}}</span>
+                                                </div>
+                                                <div class="action-btn">
+                                                    <a-icon type="message" />
+                                                    <span>{{item.comments | resetNum}}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div v-if="isShow" class="nomore">
-                            加载完了！已经没有了
+                            <div v-if="isShow" class="nomore">
+                                加载完了！已经没有了
+                            </div>
                         </div>
                         <div v-if="list.length == 0 && !loading" class="empty">
                             <a-config-provider :locale="locale">
@@ -175,7 +177,7 @@ export default {
         if (res.code != 1) {
             redirect("/404")
         }
-        res.data.list = res.data.list ?? []
+        res.data.list = res.data.list != null ? res.data.list : []
         return {
             categoryList:[],
             base:store.state.base,

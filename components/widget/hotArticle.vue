@@ -3,7 +3,7 @@
         <!-- <div class="text">
             <h2>热门文章</h2>
         </div> -->
-        <div class="hot-topic">
+        <div v-if="list.length > 0" class="hot-topic">
             <div @click="goPath(`/article/${frist.id}`)"  class="first">
                 <div  class="cover">
                     <img :src="frist.cover">
@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <ul class="list">
+        <ul class="list" v-if="list.length > 0">
             <li v-for="(item,index) in list" :key="index" @click="goPath(`/article/${item.id}`)" class="item">
                 <div class="num">
                     <span>{{index+2}}</span>
@@ -84,7 +84,7 @@ export default {
                 )
                 return
             }
-            this.list = res?.data?.list ?? []
+            this.list = res.data.list != null ? res.data.list : []
             this.frist = this.list[0]
             this.list.shift();
         },

@@ -26,7 +26,7 @@
 export default {
     methods:{
         go(){
-           this.$router.push({ path: `/wiki/create`})
+           this.$router.push({ path: `/article/create`})
         }
     }
 }

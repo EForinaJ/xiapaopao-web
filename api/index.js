@@ -73,9 +73,9 @@ const api = {
     postAccountUpdatePhone: web + "/account/editPhone", //修改用户邮箱
     getAccountSecurity: web + "/account/security", //获取用户账户绑定信息
     postAccountSign: web + "/account/sign", // 用户签到
-    getAccountWikiList: web + "/account/wiki/list",
+    getAccountArticleList: web + "/account/article/list",
     getAccountPostList: web + "/account/post/list",
-    getAccountFavoriteWikiList: web + "/account/favorite/wiki/list",
+    getAccountFavoriteArticleList: web + "/account/favorite/article/list",
     getAccountFavoritePostList: web + "/account/favorite/post/list",
 
 

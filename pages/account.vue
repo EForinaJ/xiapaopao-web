@@ -118,7 +118,7 @@
                                 <a-icon type="right-circle" />
                             </div>
                         </div>
-                        <!-- <div @click="goRouter('/wiki')" :class="selectedKeys == '/wiki' ? 'active item' : 'item'">
+                        <div @click="goRouter('/article')" :class="selectedKeys == '/article' ? 'active item' : 'item'">
                             <div class="item-info">
                                 <FIcon :size="24" type="icon-tiezi"/>
                                 <p>
@@ -128,7 +128,7 @@
                             <div class="author-menu-right">
                                 <a-icon type="right-circle" />
                             </div>
-                        </div> -->
+                        </div>
                         <div @click="goRouter('/favorite')" :class="selectedKeys == '/favorite' ? 'active item' : 'item'">
                             <div class="item-info">
                                 <FIcon :size="24" type="icon-shoucang"/>

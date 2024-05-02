@@ -1,20 +1,20 @@
 <template>
     <div class="account-page">
         <div class="content">
-            <!-- <div class="menu">
+            <div class="menu">
                 <ul class="list">
                     <li @click="goRouter('/')" :class="selectKey == '/' ? 'active item' : 'item'">
                         <span>
                             帖子
                         </span>
                     </li>
-                    <li @click="goRouter('/wiki')" :class="selectKey == '/wiki' ? 'active item' : 'item'">
+                    <li @click="goRouter('/article')" :class="selectKey == '/article' ? 'active item' : 'item'">
                         <span>
                             文章
                         </span>
                     </li>
                 </ul>
-            </div> -->
+            </div>
             <div class="panel">
                 <transition name="page-transition">
                     <!-- <Nuxt /> -->
