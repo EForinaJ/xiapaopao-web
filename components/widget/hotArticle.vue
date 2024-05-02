@@ -76,7 +76,7 @@ export default {
                 limit: 5,
                 mode: 1
             }
-            const res = await this.$axios.get(api.getWikiList,{params: query})
+            const res = await this.$axios.get(api.getArticleList,{params: query})
             if (res.code != 1) {
                 this.$message.error(
                     res.message,

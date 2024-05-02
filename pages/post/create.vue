@@ -4,21 +4,7 @@
             <a-row :gutter="[{md:20}]">
                 <a-col :span="24" :md="18">
                     <div class="content">
-                        <div class="cover">
-                            <div v-if="form.cover == ''" @click="selectImg" class="mark">
-                                <div class="icon">
-                                    <a-icon theme="filled" type="camera" />
-                                </div>
-                            </div>
-                            <div @click="selectImg" v-if="form.cover != ''" class="cover-img-btn">
-                                <div class="cover-img" :style="{ backgroundImage: `url(${form.cover})@w900_h330` }"></div>
-                                <div class="icon">
-                                    <div class="icon-info">
-                                        <a-icon theme="filled" type="camera" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="create-title">
                             <a-input
                                 size="large"
@@ -26,11 +12,11 @@
                                 v-model="form.title"
                                 :maxLength="256"
                             />
-                            <div class="create-content">
+                            <!-- <div class="create-content">
                                 <TinyMceEditor @writeContent="writeContent"   
                                     :valueContont="form.content"/>
-                            </div>
-                            <!-- <a-textarea  
+                            </div> -->
+                            <a-textarea  
                                 @change="changeContent"
                                 id="editor-box" 
                                 :rows="8"
@@ -48,8 +34,27 @@
                                         <span v-if="contentCount > 100">{{ contentCount }}</span>
                                     </template>
                                 </a-progress>
-                            </div> -->
+                            </div>
                         </div>
+
+                         <div  class="create-images">
+                            <p>最多上传9张图片</p>
+                            <div class="image-list">
+                                <div class="item" v-for="(item,index) in form.images" :key="index">
+                                    <div class="image-box">
+                                        <img :src="item | resetImage(100,100)" alt="xxx">
+                                        <b @click="removeImg(index)" class="img-close"><a-icon type="close" /></b>
+                                    </div>
+                                </div>
+                                <div lass="item" v-if="form.images.length < 9">
+                                    <div class="add-image" @click="selectImg">
+                                        <a-icon class="icon" type="plus" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                         <div v-if="form.setResource" class="create-resouce">
                             <a-row :gutter="[{md:20}]">
                                 <a-col :span="24" :md="12">
@@ -556,13 +561,26 @@ export default {
         selectImg(){
             this.$Upload().then((res)=>{
                 if (res != false) {
-                    this.form.cover = res 
+                    if (this.form.images.length <= 8) {
+                        this.form.images.push(res)
+                    }else{
+                        this.$message.error(
+                           "上传图片数量最多只能为9张",
+                            3
+                        )
+                        return
+                    }
+                     this.form.video = undefined
+                    
                 }
             }).catch((err)=>{
                this.form.images = []
                 // this.createForm.link = null
             })
             
+        },
+        removeImg(i){
+            this.form.images.splice(i,1)
         },
         
         submit(){
@@ -578,13 +596,13 @@ export default {
                 )
                 return
             }
-            // if (this.form.images.length > 9) {
-            //     this.$message.error(
-            //         "请不要上传超过9张图片",
-            //         3
-            //     )
-            //     return
-            // }
+            if (this.form.images.length > 9) {
+                this.$message.error(
+                    "请不要上传超过9张图片",
+                    3
+                )
+                return
+            }
             if (this.form.categoryId === 0 || this.form.categoryId == null || this.form.categoryId == undefined) {
                 this.$message.error(
                     "请设置栏目",
@@ -640,6 +658,10 @@ export default {
             }
 
             this.form.setResource = this.form.setResource ? 2 : 1
+
+            this.form.content = this.form.content.replace(/\n/g,"<br/>");  
+      
+
             this.postCreate(this.form)
 
         },
@@ -659,9 +681,6 @@ export default {
                     )
                     this.$router.push(`/account`)
                 }
-                // this.A_UPDATE_NICKNAME(this.form.nickName)
-                // this.A_UPDATE_COVER(this.form.cover)
-                // this.A_UPDATE_AVATAR(this.form.avatar)
             } catch (error) {
                 (error)
                 setTimeout(() => {
@@ -836,7 +855,79 @@ export default {
                     }
                 }
             }
+            
 
+            .create-images{
+                margin-bottom: 20px;
+                p{
+                    font-size: 12px;
+                    padding-bottom: 15px;
+                    display: flex;
+                    align-items: center;
+                    line-height: 1;
+                }
+                .image-list{
+                    display: flex;
+                    flex-wrap: wrap;
+                    .add-image{
+                        cursor: pointer;
+                        box-shadow: inset 0 0 2px rgb(137, 137, 137);
+                        border-radius: 2px;
+                        height: 100px;
+                        width: 100px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        .icon{
+                            color: rgb(137, 137, 137);
+                            font-size: 30px;
+                        }
+                    }   
+                    .item{
+                        height: 100px;
+                        width: 100px;
+                        position: relative;
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+                        .image-box{
+                            height: 100px;
+                            width: 100px;
+                            padding-top: 100%;
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 12px;
+                            cursor: move;
+                            img{
+                                position: absolute;
+                                left: 0;
+                                top: 0;
+                                height: 100px;
+                                width: 100px;
+                                box-shadow: inset 0 0 2px rgb(137, 137, 137);
+                                border-radius: 2px;
+                            }
+                            .img-close{
+                                position: absolute;
+                                right: 0;
+                                top: 9px;
+                                width: 14px;
+                                display: block;
+                                background: rgba(255, 255, 255, 0.88);
+                                text-align: center;
+                                height: 14px;
+                                border-radius: 100%;
+                                cursor: pointer;
+                                line-height: 14px;
+                                text-align: center;
+                                margin-right: 10px;
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+            }
             .create-resouce{
                 margin-bottom: 20px;
                 /deep/ .ant-input{

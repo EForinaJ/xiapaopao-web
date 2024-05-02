@@ -545,6 +545,30 @@ export default {
                     -webkit-box-shadow: none !important;
                     box-shadow: none !important;
                 }
+                /deep/ .tox-tinymce{
+                    border: none;
+                }
+                /deep/ .tox-editor-header{
+                    border-top: 2px solid #f5f5f5;
+                    border-bottom: 2px solid #f5f5f5;
+                }
+                /deep/ .tox-toolbar__primary{
+                    background: none;
+                }
+            }
+            .create-content{
+                border: 1px solid #f5f5f5;
+                border-radius: 4px;
+                /deep/ .tox-tinymce{
+                    border: none;
+                }
+                /deep/ .tox-editor-header{
+                    border-top: 2px solid #f5f5f5;
+                    border-bottom: 2px solid #f5f5f5;
+                }
+                /deep/ .tox-toolbar__primary{
+                    background: none;
+                }
             }
             .description{
                 margin-bottom: 20px;

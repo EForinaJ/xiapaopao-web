@@ -29,16 +29,16 @@
                     首页
                   </nuxt-link>
                 </li>
+                <!-- <li :class="selectedKeys[0] == '/articles' ? 'active item' : 'item'" >
+                  <nuxt-link  :to="`/articles`">
+                    文章
+                  </nuxt-link>
+                </li> -->
                 <li :class="selectedKeys[0] == '/tools' ? 'active item' : 'item'" >
                   <nuxt-link  :to="`/tools`">
                     工具
                   </nuxt-link>
                 </li>
-                <!-- <li :class="selectedKeys[0] == '/wikis' ? 'active item' : 'item'" >
-                  <nuxt-link  :to="`/wikis`">
-                    文章
-                  </nuxt-link>
-                </li> -->
                 <li :class="selectedKeys[0] == '/about' ? 'active item' : 'item'" >
                     <nuxt-link :to="`/about`">
                       About

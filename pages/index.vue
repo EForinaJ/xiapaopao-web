@@ -17,8 +17,8 @@
                                                 <div @click="goPath(`/post/${leftPost.id}`)" class="title">
                                                     {{leftPost.title}}
                                                 </div>
-                                                <div @click="goPath(`/post/${leftPost.id}`)" class="desc">
-                                                   {{leftPost.content}}
+                                                <div v-if="leftPost.content != ''" @click="goPath(`/post/${leftPost.id}`)" class="desc">
+                                                   {{leftPost.content | resetContent}}
                                                 </div>
                                             </div>
                                             <div class="meta">
@@ -66,8 +66,8 @@
                                                 <div @click="goPath(`/post/${rightPost.id}`)" class="title">
                                                     {{rightPost.title}}
                                                 </div>
-                                                <div @click="goPath(`/post/${rightPost.id}`)" class="desc">
-                                                   {{rightPost.content}}
+                                                <div v-if="rightPost.content != ''" @click="goPath(`/post/${rightPost.id}`)" class="desc">
+                                                   {{rightPost.content | resetContent}}
                                                 </div>
                                             </div>
                                             <div class="meta">
@@ -252,6 +252,11 @@ export default {
                 { name: 'keywords', content: this.base.description },
                 { name: 'description', content: this.base.description }
             ]
+        }
+    },
+    filters:{
+        resetContent(e){
+            return e.replace(/<br\/>/g," ")
         }
     },
     computed:{

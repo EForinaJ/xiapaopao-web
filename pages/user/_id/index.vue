@@ -30,8 +30,8 @@
                         <div @click="goPath(`/post/${item.id}`)" class="title">
                             <h2>{{item.title}}</h2>
                         </div>
-                        <div @click="goPath(`/post/${item.id}`)" class="post-content">
-                            {{item.content}}
+                        <div @click="goPath(`/post/${item.id}`)" v-html="item.content" class="post-content">
+                            
                         </div>
                         <div v-if="item.images" class="images">
                             <ImageAdaptation :list="item.images"/>
@@ -149,7 +149,7 @@ export default {
                 )
                 return
             }
-            res.data.list = res.data.list ?? [] 
+            res.data.list = res.data.list != null ? res.data.list : []
             this.isShow = res.data.list.length > 0 ? false : true
             this.list = [...this.list,...res.data.list]
             this.total = res.data.total

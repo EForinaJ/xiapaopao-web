@@ -199,11 +199,13 @@ export default {
     "cookie-universal-nuxt",
     // "@nuxtjs/sitemap",
   ],
-  server:{
-    port: 3000,
-    host: "0.0.0.0"
+  // server:{
+  //   port: 3000,
+  //   host: "0.0.0.0"
+  // },
+  env: {
+    BASE_URL: process.env.BASE_URL || '',
   },
-  
   // axios: {
   //   prefix: '/v1/',
   //   proxy: true,

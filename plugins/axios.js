@@ -1,20 +1,12 @@
-/*
- * @Author: eforinaj eforinaj@gimail.com
- * @Date: 2022-10-07 14:52:32
- * @LastEditors: eforinaj eforinaj@gimail.com
- * @LastEditTime: 2024-03-18 06:32:05
- * @FilePath: \web\plugins\axios.js
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
-
 import notification from 'ant-design-vue/lib/notification'
 
 export default function ({store, $axios,app: { $cookies },redirect})  {
+    
 	// 访问基本设置
     $axios.defaults.baseURL = process.env.BASE_URL
     // $axios.defaults.baseURL = "https://www.aipaikesi.com"
     $axios.defaults.timeout = 200000
-    
+  
 	// request拦截器，我这里设置了一个token，当然你可以不要
 	$axios.onRequest(config => {
         if(process.server){

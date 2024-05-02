@@ -53,77 +53,126 @@
                         </div>
                         
                         <div class="post-top">
-                            <div class="post-left">
-                                <div class="post-cover">
-                                    <img :src="info.cover | resetImage(150,150)" alt="asdasd">
+                            <!-- 帖子标题 -->
+                            <h1 class="post-title">{{info.title}}</h1>
+
+                            
+
+                            <!-- 帖子相关 -->
+                            <div class="post-meta">
+                                <div class="cate-view-like">
+                                    <a-space>
+                                        <div class="meta-icon">
+                                            <a-icon theme="filled"  type="eye" />
+                                            <b>{{info.views | resetNum}}</b>
+                                        </div>
+                                        <div class="meta-icon">
+                                            <a-icon theme="filled" type="heart" />
+                                            <b>{{info.likes | resetNum}}</b>
+                                        </div>
+                                    </a-space>
                                 </div>
-                                <div @click="goLive(info.live)" class="live">
-                                    访问直播间
+                                <div class="date-report">
+                                    <span class="date">{{info.createTime | resetData}}</span>
+                                 
                                 </div>
                             </div>
-                            <div class="post-rghit">
-                                <!-- 帖子标题 -->
-                                <h1 class="post-title">{{info.title}}</h1>
+            
+                            <!-- 内容 -->
+                            <div @click="showImg($event)" class="post-content entry-content" v-html="info.content"> </div>
 
-                                
 
-                                <!-- 帖子相关 -->
-                                <div class="post-meta">
-                                    <div class="cate-view-like">
-                                        <a-space>
-                                            <div class="meta-icon">
-                                                <a-icon theme="filled"  type="eye" />
-                                                <b>{{info.views | resetNum}}</b>
-                                            </div>
-                                            <div class="meta-icon">
-                                                <a-icon theme="filled" type="heart" />
-                                                <b>{{info.likes | resetNum}}</b>
-                                            </div>
-                                        </a-space>
-                                        <div class="date">
-                                            {{info.createTime | resetData}}
-                                        </div>
-                                    </div>
-                                   <div class="category-forum">
-                                        <div  class="tag category">
-                                            <span class="title">{{info.category.title}}</span>
-                                        </div>
-                                        <div class="tag forum">
-                                            <span class="title">{{info.forum.title}}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- 帖子描述 -->
-                                <div class="post-description">
-                                    {{info.description}}
-                                </div>
 
-                                <!-- 标签 -->
+                            <!-- 标签 -->
+                            <div class="report-tags">
                                 <div class="post-tag">
+                                    <div v-if="info.category != null" @click="goPath(`/category/${info.category.id}`)" class="tag category">
+                                        <span class="title">{{info.category.title}}</span>
+                                    </div>
+                                    <div v-if="info.forum != null" class="tag forum">
+                                        <span class="title">{{ info.forum.title}}</span>
+                                    </div>
                                     <div class="tag" v-for="(item,index) in info.tagList" :key="index">
                                         <span class="title">{{item.title}}</span>
                                     </div>
                                 </div>
-                                <!-- 打赏 -->
-                                <Reward 
-                                    module="article" 
-                                    :relatedId="info.id"
-                                />
+                                
                             </div>
+                            
+
+                            <!-- 隐藏资源 -->
+                            <div class="post-hide" v-if="info.setResource == 2">
+                                <div class="title">
+                                    {{info.resource.title}}
+                                </div>
+                                <div @click="viewExample" class="example">
+                                    <span>查看演示</span>
+                                    <a-icon type="right" />
+                                </div>
+                                <div v-if="info.resource.attr.length > 0" class="attr">
+                                    <a-row :gutter="[20,20]">
+                                        <a-col v-for="(item,index) in info.resource.attr" :key="index" :span="24" :md="12">
+                                            <div class="item">
+                                                <span class="key">
+                                                    {{item.key}}
+                                                </span>
+                                                <span class="mou">
+                                                    :
+                                                </span>
+                                                <span class="value">
+                                                    {{item.value}}
+                                                </span>
+                                            </div>
+                                        </a-col>
+                                    </a-row>
+                                </div>
+                                <div :class="info.resource.isView ? 'auth sucsse' : 'auth'">
+                                    <div class="info">
+                                        <span class="text">所需要权限为:</span>
+                                        <a-tag color="pink">
+                                            {{info.resource.mode | resetMode}}
+                                        </a-tag>
+                                    </div>
+                                    <div v-if="info.resource.grade && info.resource.mode == 3" class="grade mode-text">
+                                        <span>你的等级还未达到</span>
+                                        <img :src="info.resource.grade.icon" alt="">
+                                    </div>
+                                    <div v-if="info.resource.mode == 1" class="mode-text">
+                                        请在注册登录之后，方可阅读隐藏内容
+                                    </div>
+                                    <div  v-if="info.resource.mode == 2" class="mode-text">
+                                        请在下面参与讨论之后，方可阅读隐藏内容
+                                    </div>
+                                    <div v-if="info.resource.mode == 4" class="mode-text">
+                                        使用{{info.resource.integral}}积分，方可阅读隐藏内容
+                                    </div>
+                                    <div v-if="info.resource.mode == 5" class="mode-text">
+                                        支付{{info.resource.money}}购买，方可阅读隐藏内容
+                                    </div>
+                                    <div class="hide">
+                                        <div class="view" @click="viewLink">
+                                            点击查看
+                                        </div>
+                                        <div class="code">
+                                            <span class="text">提取码（点击复制）:</span>
+                                            <span class="info">{{info.resource.gainCode != "" ? info.resource.gainCode : "******"}}</span>
+                                        </div>
+                                        <div class="code">
+                                            <span class="text">解压码（点击复制）:</span>
+                                            <span class="info">{{info.resource.untieCode!= "" ? info.resource.untieCode : "******"}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+
+
+                            <!-- 打赏 -->
+                            <Reward 
+                                module="post" 
+                                :relatedId="info.id"
+                            />
                         </div>
-
-                        
-                    </div>
-
-                    <div class="content-adv">
-                        <img src="/img/home/h2-slider1-background-img.jpg" alt="asdasd">
-                    </div>
-
-                    <div class="attr">
-                        <div class="top-text">
-                            <h2>详细内容</h2>
-                        </div>
-                        <div class="info" v-html="info.content"> </div>
                     </div>
 
                     <div id="comment"  class="comment">
@@ -211,9 +260,6 @@ export default {
             }
             // this.info.comments = e
         },
-        goLive(path){
-            window.open(path, '_blank');
-        },
         goPath(path){
             this.$router.push(path)
         },
@@ -222,7 +268,7 @@ export default {
                 this.$Auth("login","登录","快速登录")
                 return
             }
-            if (!this.accountInfo.grade.auth.includes("favorite")) {
+            if (!this.accountInfo.grade.auth.includes("like")) {
                 this.$message.error(
                     "你的等级还无此权限",
                     3
@@ -286,7 +332,7 @@ export default {
                     3
                 )
                 if (this.info.id == this.id) {
-                this.info.isFavorite = !this.info.isFavorite
+                    this.info.isFavorite = !this.info.isFavorite
                     if (this.info.isFavorite) {
                         this.info.favorites =  this.info.favorites + 1
                     } else {
@@ -321,298 +367,210 @@ export default {
             background: white;
             border-radius: 4px;
             padding: 20px;
-
             .post-top{
-                display: flex;
-                .post-left{
-                    margin-right: 20px;
-                    .post-cover{
-                        height: 150px;
-                        width: 150px;
-                        border-radius: 4px;
-                        margin-bottom: 10px;
-                        img{
-                            height: 100%;
-                            width: 100%;
-                            border-radius: 4px;
-                            object-fit: cover;
-                        }
-                    }
-                    .live{
-                        text-align: center;
-                        font-size: 12px;
-                        border-radius: 4px;
+                flex: 1;
+                .post-title{
+                    font-size: 21px;
+                    font-weight: 600;
+                    line-height: 36px;
+                    margin-bottom: 10px;
+                }
+                
+           
+                .post-tag{
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 20px;
+                    .tag{
+                        margin-right: 10px;
                         cursor: pointer;
                         user-select: none;
+                        display: flex;
+                        padding: 4px 10px;
+                        color: #8590a6;
+                        border-radius: 15px;
+                        background: rgba(173, 173, 173, 0.16);
+                        .icon{
+                            color: #8590a6;
+                            margin-right: 6px;
+                            font-size: 12px;
+                            border-radius: 80%;
+                        }
+                        .title{
+                            font-size: 12px;
+                        }
+                    }
+                    .category{
                         background-color: rgba(0, 102, 255, 0.1);
                         color: #0066ff !important;
-                        height: 30px;
-                        line-height: 30px;
-                        padding: 0 16px;
-                        font-weight: 500;
+                    }
+                    .forum{
+                        background-color: rgba(255, 0, 0, 0.1);
+                        color: #ff0051 !important;
                     }
                 }
-                .post-rghit{
-                    flex: 1;
-                    .post-title{
-                        font-size: 21px;
-                        font-weight: 600;
-                        line-height: 36px;
-                        margin-bottom: 10px;
-                    }
-                    
-                    .post-tag{
+                
+                
+                .post-content{
+                    margin-bottom:  20px;
+                }
+                .post-meta{
+                    margin-bottom: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    .cate-view-like{
                         display: flex;
-                        align-items: center;
-                        margin-bottom: 15px;
-                        .tag{
-                            margin-right: 10px;
-                            cursor: pointer;
-                            user-select: none;
-                            display: flex;
-                            padding: 4px 10px;
-                            color: #8590a6;
-                            border-radius: 15px;
-                            background: rgba(173, 173, 173, 0.16);
-                            .icon{
-                                color: #8590a6;
-                                margin-right: 6px;
-                                font-size: 12px;
-                                border-radius: 80%;
-                            }
-                            .title{
-                                font-size: 12px;
-                            }
-                        }
-                        .category{
-                            background-color: rgba(0, 102, 255, 0.1);
-                            color: #0066ff !important;
-                        }
-                        .forum{
-                            background-color: rgba(255, 0, 0, 0.1);
-                            color: #ff0051 !important;
-                        }
-                    }
-
-                    .post-meta{
-                        margin-bottom: 12px;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        .cate-view-like{
-                            display: flex;
-                            
-                            .date{
-                                letter-spacing: 2px;
-                                font-size: 12px;
-                                color: #8590A6;
-                            }
-                            .meta-icon{
-                                margin-right: 15px;
-                                font-size: 14px;
-                                display: flex;
-                                align-items: center;
-                                color: #8590A6;
-                                b{
-                                    margin-left: 5px;
-                                    font-size: 12px;
-                                    font-weight: 700;
-                                    display: flex;
-                                    line-height: 1;
-                                }
-                            }
-                        }
-                       
-                        .category-forum{
+                        .meta-icon{
+                            margin-right: 15px;
+                            font-size: 14px;
                             display: flex;
                             align-items: center;
-                            margin-bottom: 15px;
-                            .tag{
-                                margin-left: 10px;
-                                cursor: pointer;
-                                user-select: none;
+                            color: #8590A6;
+                            b{
+                                margin-left: 5px;
+                                font-size: 12px;
+                                font-weight: 700;
                                 display: flex;
-                                padding: 4px 10px;
-                                color: #8590a6;
-                                border-radius: 15px;
-                                background: rgba(173, 173, 173, 0.16);
-                                .icon{
-                                    color: #8590a6;
-                                    margin-right: 6px;
-                                    font-size: 12px;
-                                    border-radius: 80%;
-                                }
-                                .title{
-                                    font-size: 12px;
-                                }
-                            }
-                            .category{
-                                background-color: rgba(0, 102, 255, 0.1);
-                                color: #0066ff !important;
-                            }
-                            .forum{
-                                background-color: rgba(255, 0, 0, 0.1);
-                                color: #ff0051 !important;
+                                line-height: 1;
                             }
                         }
                     }
-
-                    .post-description{
-                        border-radius: 4px;
-                        font-size: 13px;
-                        line-height: 1.8em;
-                        padding: 10px;
-                        background: #eef7ff;
-                        margin-bottom: 12px;
-                    }
-                }
-            }
-            
-            
-            
-
-            
-
-            .post-ds{
-                display: flex;
-                justify-content: center;
-                flex-flow: column;
-                margin-bottom: 12px;
-                padding: 20px;
-                border-radius: 3px;
-                position: relative;
-                background: #fffcf7;
-                .count{
-                    font-size: 12px;
-                    margin: 17px 0 5px;
-                    color: #515A6E;
-                }
-                .users{
-                    max-width: 50%;
-                    display: flex;
-                    margin: 0;
-                    flex-wrap: wrap;
-                    .item{
-                        padding: 0;
-                        border: 0;
-                        margin: 2px;
-                        position: unset;
-                        img{
-                            display: block;
-                            width: 32px;
-                            height: 32px;
-                            object-fit: cover;
-                            border-radius: 3px;
+                    .date-report{
+                        display: flex;
+                        align-items: center;
+                        .date{
+                            margin-right: 10px;
+                            font-size: 12px;
+                            color: #8590A6;
                         }
-                    }
-                }
-                .ds-btn{
-                    position: absolute;
-                    right: 20px;
-                    top: 8px;
-                    #con{
-                        width: 320px;
-                        height: 85px;
-                        position: relative;
-                        border-radius: 4px;
-                        margin: 50px auto;
-                        #TA-con{
-                            width: 122px;
-                            height: 45px;
-                            background-color: #f25d8e;
-                            position: absolute;
-                            top: 50%;
-                            left: 14%;
-                            transform: translateY(-50%);
-                            border-radius: 4px;
+                        .report{
                             cursor: pointer;
-                            z-index: 2;
-                            #text-icon{
-                                width: 100px;
-                                height: 100%;
-                                margin: 0 auto;
-                                position: relative;
+                            user-select: none;
+                            font-size: 16px;
+                        }
+                    }
+                }
+                .adaptation{
+                    margin-bottom: 20px;
+                }
+                .post-hide{
+                    padding: 20px;
+                    background: rgba(167, 167, 167, 0.08);
+                    margin-bottom: 20px;
+                    .title{
+                        font-size: 16px;
+                        font-weight: 600;
+                    }
+                    .example{
+                        cursor: pointer;
+                        user-select: none;
+                        margin: 20px 0;
+                        color: #0066ff;
+                        display: flex;
+                        align-items: center;
+                        span{
+                            margin-right: 5px;
+                        }
+                    }
+                    .attr{
+                        background: rgba(167, 167, 167, 0.08);
+                        margin-bottom: 20px;
+                        padding: 15px 20px;
+                        border-radius: 4px;
+                        .item{
+                            font-size: 12px;
+                            color: #8590A6;
+                            display: flex;
+                            align-items: center;
+                            .mou{
+                                margin: 0 5px;
+                            }
+                        }
+                    }
+                    .auth{
+                        background: rgba(244, 67, 54, 0.04);
+                        border-radius: 4px;
+                        margin-top: 10px;
+                        padding: 20px;
+                        border: 2px dashed rgba(255, 0, 0, 0.26);
+                        .info{
+                            display: flex;
+                            align-items: center;
+                            .text{
+                                font-weight: 700;
+                                margin-right: 10px;
+                            }
+                        }
+                        .grade{
+                            display: flex;
+                            align-items: center;
+                            margin: 10px 0;
+                            img{
+                                margin-left: 10px;
+                                height: 1.5em;
+                                max-width: 6em;
+                                vertical-align: -0.15em;
+                                -webkit-backface-visibility: hidden;
+                                backface-visibility: hidden;
+                                display: inline-block;
+                            }
+                            
+                        }
+                        .mode-text{
+                            margin: 10px 0;
+                            font-size: 12px;
+                            color: #8590A6;
+                        }
+                        .integral{
+                            margin-top: 5px;
+                            font-size: 12px;
+                            color: #8590A6;
+                        }
+                        .pay{
+                            margin-top: 5px;
+                            font-size: 12px;
+                            color: #8590A6;
+                        }
+                        .hide{
+                            margin-top: 10px;
+                            display: flex;
+                            align-items: center;
+                            .view{
+                                user-select: none;
+                                margin-right: 10px;
+                                display: inline-block;
+                                cursor: pointer;
+                                font-size: 12px;
+                                border: 1px solid #0066ff;
+                                border-radius: 4px;
+                                padding: 5px 16px;
+                                color: #0066ff;
+                            }
+                            .code{
                                 display: flex;
                                 align-items: center;
-                                .icon{
-                                    font-size: 18px;
-                                    color: #fff;
-                                }
-                                #TA{
-                                    margin-left: 5px;
-                                    float: right;
-                                    line-height: 45px;
-                                    font-size: 15px;
-                                    color: #fff;
-                                }
-                            }
-                        }
-                        #tube-con{
-                            width: 157px;
-                            height: 55px;
-                            position: absolute;
-                            right: -5px;
-                            top: 15px;
-                            svg{
-                                width: 100%;
-                                height: 100%;
-                            }
-
-                            #mask{
-                                width: 0px;
-                                height: 100%;
-                                overflow: hidden;
-                                position: absolute;
-                                top: 0;
-                                left: 0;
-                                transition: all 0.5s;
-                                svg{
-                                    width: 157px;
-                                    height: 55px;
-                                }
-                            }
-                            #orange-mask{
-                                width: 18px;
-                                height: 100%;
-                                overflow: hidden;
-                                position: absolute;
-                                left: -15px;
-                                top: 0px;
-                                svg{
-                                    position: absolute;
-                                    top: 0;
-                                    left: 15px;
-                                    width: 157px;
-                                    height: 55px;
-                                }
-                            }
-                            #people {
-                                position: absolute;
-                                right: 10px;
-                                top: 18px;
+                                background-color: #f0f2f5;
+                                padding: 8px 20px;
                                 font-size: 12px;
-                                font-family: "雅黑";
-                                color: #aaa;
+                                margin-right: 10px;
+                                cursor: pointer;
+                                .text{
+                                    margin-right: 5px;
+                                }
+                                .info{
+                                    font-weight: bold;
+                                }
                             }
-                        }
-                        #TA-con:hover{
-                            background-color: #ff6b9a;
-                        }
-                        #TA-con:hover+#tube-con>#mask {
-                            width: 157px;
-                        }
-                        #TA-con:hover+#tube-con>#orange-mask {
-                            animation: move1 0.5s linear 0.2s infinite;
-                        }
-                        #TA-con:hover+#tube-con>#orange-mask svg {
-                            animation: movetwo 0.5s linear 0.2s infinite;
                         }
                     }
+                    .sucsse{
+                        background: rgba(139,195,74, 0.05);
+                        border: 2px dashed rgb(0 128 0 / 28%);
+                    }
+                    
                 }
-
-
             }
-
             
 
             .post-footer{
@@ -670,35 +628,8 @@ export default {
                     }
                 }
             }
-        }
-        .attr{
-            background: white;
-            border-radius: 4px;
-            padding: 20px;
-            margin-top: 20px;
-            .top-text{
-                h2{
-                    display: flex;
-                    align-items: center;
-                    font-size: 18px;
-                    font-weight: 600;
-                }
-            }
-            .info{
-                margin-top: 20px;
-            }
-        }
-        .content-adv{
-            height: 80px;
-            width: 100%;
-            border-radius: 4px;
-            margin-top: 20px;;
-            img{
-                height: 100%;
-                width: 100%;
-                border-radius: 4px;
-                object-fit: cover;
-            }
+
+            
         }
         .comment{
             margin-top: 20px;

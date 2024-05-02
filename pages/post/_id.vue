@@ -95,7 +95,9 @@
                             <!-- 内容 -->
                             <div @click="showImg($event)" class="post-content entry-content" v-html="info.content"> </div>
 
-
+                            <div v-if="info.images" class="adaptation">
+                                <ImageAdaptation :list="info.images"/>
+                            </div>
 
                             <!-- 标签 -->
                             <div class="report-tags">
@@ -219,14 +221,14 @@ import { mapState } from "vuex"
 
 import CommentList from "@/components/commnet"
 
-
+import ImageAdaptation from "@/components/adaptation/image"
 import Anthor from "@/components/widget/anthor"
 import Reward from "@/components/widget/reward"
 import About from "@/components/widget/about"
 import HotPost from "@/components/widget/hotPost"
 export default {
     components:{
-        Anthor,About,Reward,HotPost,
+        Anthor,About,Reward,HotPost,ImageAdaptation,
         
         CommentList,
     },
