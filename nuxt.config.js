@@ -203,19 +203,16 @@ export default {
   //   port: 3000,
   //   host: "0.0.0.0"
   // },
-  env: {
-    BASE_URL: process.env.BASE_URL || '',
+  axios: {
+    prefix: '/v1/',
+    proxy: true,
   },
-  // axios: {
-  //   prefix: '/v1/',
-  //   proxy: true,
-  // },
-  // proxy: {
-  //   "/v1/": {
-  //     changeOrigin: true,
-  //     target: "http://localhost:8199"
-  //   }
-  // },
+  proxy: {
+    "/v1/": {
+      changeOrigin: true,
+      target: "http://localhost:8199"
+    }
+  },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/

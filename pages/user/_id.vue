@@ -50,7 +50,7 @@
                                 <a-icon type="right-circle" />
                             </div>
                         </div>
-                        <!-- <div @click="goRouter('/article')" :class="selectedKeys == '/article' ? 'active item' : 'item'">
+                        <div @click="goRouter('/article')" :class="selectedKeys == '/article' ? 'active item' : 'item'">
                             <div class="item-info">
                                 <p>
                                     文章
@@ -59,18 +59,7 @@
                             <div class="author-menu-right">
                                 <a-icon type="right-circle" />
                             </div>
-                        </div> -->
-
-                        <!-- <div @click="goRouter('/wiki')" :class="selectedKeys == '/wiki' ? 'active item' : 'item'">
-                            <div class="item-info">
-                                <p>
-                                    文章
-                                </p>
-                            </div>
-                            <div class="author-menu-right">
-                                <a-icon type="right-circle" />
-                            </div>
-                        </div> -->
+                        </div>
                         <div @click="goRouter('/follow')" :class="selectedKeys == '/follow' ? 'active item' : 'item'">
                             <div class="item-info">
                                 <!-- <FIcon :size="24" type="icon-yonghu"/> -->

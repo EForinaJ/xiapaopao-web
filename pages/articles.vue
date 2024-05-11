@@ -164,6 +164,15 @@ export default {
         ...mapState("user",["token","accountInfo"]),
         ...mapState("forum",["forumInfo"]),
     },
+    head () {
+        return {
+            title: `${this.base.title} - ${this.base.childTitle}`,
+            meta: [
+                { name: 'keywords', content: this.base.description },
+                { name: 'description', content: this.base.description }
+            ]
+        }
+    },
     async asyncData({$axios,redirect,store}){
     
 

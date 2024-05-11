@@ -267,10 +267,11 @@ export default {
       
         
         const res = await $axios.get(api.getSystemHome,{params:{id:store.state.forum.forumInfo.id}})
+ 
         if (res.code != 1) {
             redirect("/404")
         }
-
+     
         
         return {
             base:store.state.base,

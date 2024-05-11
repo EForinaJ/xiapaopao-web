@@ -37,7 +37,7 @@
                             </div>
                         </div>
 
-                         <div  class="create-images">
+                        <div  class="create-images">
                             <p>最多上传9张图片</p>
                             <div class="image-list">
                                 <div class="item" v-for="(item,index) in form.images" :key="index">

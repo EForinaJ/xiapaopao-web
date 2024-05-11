@@ -267,8 +267,8 @@ export default {
                     return "残月"
                 case "World's Edge":
                     return "世界尽头"
-                case "":
-                    return ""
+                case "Kings Canyon":
+                    return "诸王峡谷"
                 default:
                     return "未知"
             }
@@ -385,11 +385,12 @@ export default {
                     return "/img/apex/map/Broken_Moon.png"
                 case "World's Edge":
                     return "/img/apex/map/Worlds_Edge.png"
-                case "":
-                    return "/img/apex/map/Worlds_Edge.png"
+                case "Kings Canyon":
+                    return "/img/apex/map/Kings_Canyon.png"
                 default:
                     return "未知"
             }
+            
         },
         changePage(page,limit){
             this.queryParam.page = page

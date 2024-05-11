@@ -246,6 +246,15 @@ export default {
         ...mapState(["design"]),
         ...mapState("user",["token","accountInfo"]),
     },
+    head () {
+        return {
+            title: `${this.base.title} - ${this.base.childTitle}`,
+            meta: [
+                { name: 'keywords', content: this.base.description },
+                { name: 'description', content: this.base.description }
+            ]
+        }
+    },
     async asyncData({query,$axios,redirect,store}){
     
         const keyword = query.keyword

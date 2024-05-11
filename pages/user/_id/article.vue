@@ -145,7 +145,7 @@ export default {
                 )
                 return
             }
-            res.data.list = res.data.list ?? [] 
+            res.data.list = res.data.list != null ? res.data.list : []
             this.isShow = res.data.list.length > 0 ? false : true
             this.list = [...this.list,...res.data.list]
             this.total = res.data.total
