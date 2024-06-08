@@ -199,20 +199,20 @@ export default {
     "cookie-universal-nuxt",
     // "@nuxtjs/sitemap",
   ],
-  // server:{
-  //   port: 3000,
-  //   host: "0.0.0.0"
+  server:{
+    port: 3000,
+    host: "0.0.0.0"
+  },
+  // axios: {
+  //   prefix: '/v1/',
+  //   proxy: true,
   // },
-  axios: {
-    prefix: '/v1/',
-    proxy: true,
-  },
-  proxy: {
-    "/v1/": {
-      changeOrigin: true,
-      target: "http://localhost:8199"
-    }
-  },
+  // proxy: {
+  //   "/v1/": {
+  //     changeOrigin: true,
+  //     target: "http://localhost:8199"
+  //   }
+  // },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/

@@ -225,7 +225,7 @@
                     <HotUser />
 
                     <!-- 助手 -->
-                    <About/>
+                    <!-- <About/> -->
                 </a-col>
             </a-row>
         </div>

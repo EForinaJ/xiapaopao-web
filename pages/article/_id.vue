@@ -188,7 +188,7 @@
 
                     <HotArticle />
 
-                    <About />
+                    <!-- <About /> -->
                 </a-col>
             </a-row>
         </div>

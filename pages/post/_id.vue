@@ -208,7 +208,7 @@
                 <a-col :span="24" :md="6">
                     <Anthor @follow="follow" :info="info.userInfo"/>
                     <HotPost />
-                    <About />
+                    <!-- <About /> -->
                 </a-col>
             </a-row>
         </div>

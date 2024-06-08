@@ -206,7 +206,7 @@
                 </a-col>
                 <a-col :span="24" :md="6">
                     <HotPost />
-                    <About />
+                    <!-- <About /> -->
                 </a-col>
             </a-row>
         </div>
