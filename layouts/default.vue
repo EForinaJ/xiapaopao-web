@@ -34,7 +34,7 @@
                     文章
                   </nuxt-link>
                 </li>
-                <!-- <li :class="selectedKeys[0] == '/tools' ? 'active item' : 'item'" >
+                <li :class="selectedKeys[0] == '/tools' ? 'active item' : 'item'" >
                   <nuxt-link  :to="`/tools`">
                     工具
                   </nuxt-link>
@@ -44,7 +44,7 @@
                       About
                     <small class="small shop-tips">Me</small>
                   </nuxt-link>
-                </li> -->
+                </li>
               </ul>
             </div>
             <div class="user-search">

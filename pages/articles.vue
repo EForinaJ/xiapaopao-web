@@ -1,144 +1,148 @@
 <template>
     <div class="page">
         <div class="container" :style="{ width: design.width + 'px' }">
-        <a-row :gutter="[{md:20}]">
-            <a-col :span="24" :md="18">
-                <div class="select-tpye">
-                    <div class="category">
-                        <div class="text">
-                            栏目:
+            <div class="left">
+                <ul class="menu">
+                    <li class="item">
+                        <FIcon class="icon" :size="24" type="icon-huxiangguanzhu"/>
+                        <span class="title">关注</span>
+                    </li>
+                    <li class="item">
+                        <FIcon class="icon" :size="24" type="icon-faxian1"/>
+                        <span class="title">综合</span>
+                    </li>
+                    <div class="group" >
+                        <div :class="'group-text'">
+                            <FIcon class="icon" :size="24" type="icon-lanmuguanli"/>
+                            <span class="text">栏目分类</span>
                         </div>
-                        <div v-if="categoryList.length > 0" class="list">
-                            <div @click="changeCategory(0)" :class="0 == query.categoryId ? 'item active' : 'item'">
-                                不限
-                            </div>
-                            <div @click="changeCategory(item.id)" v-for="(item,index) in categoryList" :key="index" :class="item.id == query.categoryId ? 'item active' : 'item'">
-                                {{item.title}}
-                            </div>
-                        </div>
+                        <ul class="group-menu">
+                            <li 
+                            :class="'group-item'">
+                                APEX
+                            </li>
+                        </ul>
                     </div>
-                    <div class="orderby">
-                        <div class="text">
-                            排序:
-                        </div>
-                        
-                        <div class="list">
-                            <div @click="changeMode(0)" :class="0 == query.mode ? 'item active' : 'item'">
-                                全部
-                            </div>
-                            <div @click="changeMode(5)" :class="5 == query.mode ? 'item active' : 'item'">
-                                浏览
-                            </div>
-                            <div @click="changeMode(4)" :class="4 == query.mode ? 'item active' : 'item'">
-                                点赞
-                            </div>
-                            <div @click="changeMode(1)" :class="1 == query.mode ? 'item active' : 'item'">
-                                热门
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </ul>
+            </div>
+            <div class="right">
                 <div class="content">
-                    <div v-if="!loading" class="list">
-                        <div v-if="list.length > 0 && !loading">
-                            <div v-for="(item,index) in list" :key="index" class="item">
-                                <div @click="goPath(`/article/${item.id}`)" class="cover">
-                                    <img :src="item.cover | resetImage(140,75)" alt="" srcset="">
-                                </div>
-                                <div class="item-info">
-                                    <div class="header">
-                                        <div class="user-info-date">
-                                            <div   class="avatar-nickname">
-                                                <div @click="goPath(`/user/${item.userInfo.id}`)" class="avatar">
-                                                    <img :src="item.userInfo.avatar" :alt="item.userInfo.nickName" srcset="">
-                                                </div>
-                                                <div class="nickname-grade">
-                                                    <h2 @click="goPath(`/user/${item.userInfo.id}`)" class="nickname">{{item.userInfo.nickName}}</h2>
-                                                    <!-- <img :src="item.userInfo.grade.icon" alt=""> -->
-                                                </div>
-                                            </div>
-                                            <div class="date">
-                                                {{item.createTime | resetData}}
-                                            </div>
+                    <div class="top">
+                        
+                        <div class="create-info">
+                            <div class="create-title">
+                                <a-input
+                                    size="large"
+                                    placeholder="请写入标题（选填）" 
+                                    v-model="form.title"
+                                    :maxLength="256"
+                                />
+                            </div>
+                            <div class="create-content">
+                                <a-textarea  
+                                @change="changeContent"
+                                id="editor-box" 
+                                :rows="4"
+                                :maxLength="256"
+                                placeholder="填写内容" 
+                                v-model="form.content" />
+                            </div>
+                            <div class="create-text-num">
+                                <div class="select-forum">
+                                    <div class="forum-icon">
+                                        <div class="icon">
+                                            <FIcon class="icon" :size="20" type="icon-a-034_huati"/>
                                         </div>
-                                        <h2 class="title"  @click="goPath(`/article/${item.id}`)">{{item.title}}</h2>
-                                        <p @click="goPath(`/article/${item.id}`)" class="desc">
-                                            {{item.description}}
-                                        </p>
-                                    </div>
-                                    <div class="footer">
-                                        <div class="tags">
-                                            <div  v-if="item.forum" class="game">
-                                                {{item.forum.title}}
-                                            </div>
-                                            <div v-if="item.category" class="cate">
-                                                {{item.category.title}}
-                                            </div>
-                                        </div>
-                                        <div class="date-action">
-                                            <div class="meta">
-                                                <div class="action-btn">
-                                                    <a-icon type="eye" />
-                                                    <span>{{item.views | resetNum}}</span>
-                                                </div>
-                                                <div class="action-btn">
-                                                    <a-icon type="heart" />
-                                                    <span>{{item.likes | resetNum}}</span>
-                                                </div>
-                                                <div class="action-btn">
-                                                    <a-icon type="message" />
-                                                    <span>{{item.comments | resetNum}}</span>
-                                                </div>
-                                            </div>
+                                        <div class="title">
+                                            请选择版块
                                         </div>
                                     </div>
+                                    <div class="byte-popover">
+                                        <div class="popover-content">
+                                            <div class="forum-picker">
+                                                <div class="search">
+                                                    <a-input-search 
+                                                    placeholder="请输入版块标题" style="width: 100%" 
+                                                    @search="onSearch" />
+                                                </div>
+                                                <div class="wrapper">
+                                                    <div class="cate-menu">
+                                                        <div class="cate-item active">
+                                                            推荐圈子
+                                                        </div>
+                                                        <div class="cate-item">
+                                                            我的圈子
+                                                        </div>
+                                                        <div @click="selectForum" v-for="(item,index) in categoryList" :key="index" class="cate-item">
+                                                            {{item.title}}
+                                                        </div>
+                                                    </div>
+                                                    <div class="forum-list">
+                                                        <div class="forum-item">
+                                                            <div class="cover">
+                                                                <img src="/img/oopz.png" alt="">
+                                                            </div>
+                                                            <div class="forum-info">
+                                                                <p class="forum-title">
+                                                                    版块标题
+                                                                </p>
+                                                                <p class="desc">
+                                                                    1.4k掘友 · 1.1k沸点
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- <div class="search-list">
+                                                    <div class="forum-item">
+                                                        <div class="cover">
+                                                            <img src="/img/oopz.png" alt="">
+                                                        </div>
+                                                        <div class="forum-info">
+                                                            <p class="forum-title">
+                                                                版块标题
+                                                            </p>
+                                                            <p class="desc">
+                                                                1.4k掘友 · 1.1k沸点
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="empty">
+                                                        <a-empty >
+                                                            <span slot="description"> 搜不到版块 </span>
+                                                        </a-empty>
+                                                    </div>
+                                                </div> -->
+                                                <div class="btn-box">
+                                                    <div class="no-select">
+                                                        不选择
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="popper-arrow"></div>
+                                    </div>
                                 </div>
+                                <a-progress type="circle"  :percent="contentCount" :width="20" >
+                                    <template #format="percent">
+                                        <span v-if="contentCount < 100">{{ percent }}</span>
+                                        <span v-if="contentCount > 100">{{ contentCount }}</span>
+                                    </template>
+                                </a-progress>
+
+                                
                             </div>
-                            <div v-if="isShow" class="nomore">
-                                加载完了！已经没有了
-                            </div>
                         </div>
-                        <div v-if="list.length == 0 && !loading" class="empty">
-                            <a-config-provider :locale="locale">
-                                <a-empty />
-                            </a-config-provider>
-                        </div>
-                    </div>
-                    <div v-if="loading" class="loading">
-                        <div class="skeleton-item">
-                            <a-skeleton :loading="loading" :title="false" active></a-skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <a-skeleton :loading="loading" :title="false" active></a-skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <a-skeleton :loading="loading" :title="false" active></a-skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <a-skeleton :loading="loading" :title="false" active></a-skeleton>
-                        </div>
-                        <div class="skeleton-item">
-                            <a-skeleton :loading="loading" :title="false" active></a-skeleton>
+                        <div class="">
+
                         </div>
                     </div>
                 </div>
-            </a-col>
-            <a-col :span="24" :md="6">
-                <CreateWiki />
-                <!-- 热门帖子 -->
-                <HotArticle/>
+                <div class="sidebar">
 
-                <!-- 热门用户 -->
-                <Comment />
-                
-                <!-- 热门用户 -->
-                <HotUser />
-                
-
-                <!-- 助手 -->
-                <!-- <About/> -->
-            </a-col>
-        </a-row>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -188,7 +192,6 @@ export default {
         }
         res.data.list = res.data.list != null ? res.data.list : []
         return {
-            categoryList:[],
             base:store.state.base,
             loading: false,
             query:queryParam,
@@ -200,6 +203,44 @@ export default {
     data(){
         return{
             locale: zhCN,
+
+            categoryList: [],
+            forumList:[],
+            contentCount:0,
+            form:{
+                title:undefined,
+                description:undefined,
+                images:[],
+                categoryId:undefined,
+                forumId:undefined,
+                tags:[],
+                content:"",
+                cover: "",
+                setResource: false,
+                resource:{
+                    title:undefined,
+                    example:undefined,
+                    mode:undefined,
+                    integral:undefined,
+                    money:undefined,
+                    grade:undefined,
+                    attr:[],
+                    gainCode:undefined,
+                    untieCode:undefined,
+                    link:undefined,
+                },
+                rules:{
+                    title:[
+                        { required: true, message: '请选输入玩家名称', trigger: 'change' },
+                    ],
+                    description:[
+                        { required: true, message: '请选输入简单描述', trigger: 'change' },
+                    ],
+                    cateId:[
+                        { required: true, message: '请选择分类', trigger: 'change' },
+                    ],
+                },
+            },
         }
     },
 
@@ -234,21 +275,7 @@ export default {
             this.getList()
             this.loading = false
         },
-        async getCategroy(){
-            const res = await this.$axios.get(api.getCategoryAll,
-                {
-                    params:{module:"article",forumId:this.forumInfo.id}
-                }
-            )     
-            if (res.code != 1) {
-                this.$message.error(
-                    res.message,
-                    3
-                )
-                return
-            }
-            this.categoryList = res.data.list ?? []
-        },
+        
         goPath(path){
             this.$router.push(path)
         },
@@ -280,7 +307,48 @@ export default {
             this.isShow = res.data.list.length > 0 ? false : true
             this.list = [...this.list,...res.data.list]
             this.total = res.data.total
-        }
+        },
+
+        // -------------------------
+        async getCategroy(){
+            const res = await this.$axios.get(api.getCategoryAll,
+                {
+                    params:{module:"forum"}
+                }
+            )
+            if (res.code != 1) {
+                this.$message.error(
+                    res.message,
+                    3
+                )
+                return
+            }
+            this.categoryList = res.data.list ?? []
+        },
+        async getForum(){
+            const res = await this.$axios.get(api.getCategoryAll,
+                {
+                    params:{module:"forum"}
+                }
+            )
+            if (res.code != 1) {
+                this.$message.error(
+                    res.message,
+                    3
+                )
+                return
+            }
+            this.categoryList = res.data.list ?? []
+        },
+        selectForum(e){
+            console.log(e)
+        },
+        changeContent(){
+            this.contentCount = this.form.content.length
+        },
+        onSearch(){
+
+        },
     }
 }
 </script>
@@ -293,285 +361,365 @@ export default {
     min-height: 100vh;
     .container{
         margin-top: 20px;
-        .select-tpye{
-            padding: 15px 20px;
-            background-color: white;
+        display: flex;
+        .left{
+            top: 80px;
+            max-height: calc(100vh - 40px);
+            width: 180px;
+            position: sticky;
+            margin-right: 20px;
+            height: fit-content;
             border-radius: 4px;
-            margin-bottom: 20px;
-            .category{
-                display: flex;
-                align-items: center;
-                .text{
-                    text-align: end;
-                    width: 88px;
-                    font-size: 18px;
-                    margin-right: 10px;
-                    color: #b2bac2;
-                }
-                .list{
+            background-color: #fff;
+            overflow-x: hidden;
+            .menu{
+                background: white;
+                padding: 8px;
+                border-radius: 2px;
+                .item{
+                    cursor: pointer;
+                    margin-bottom: 2px;
                     display: flex;
                     align-items: center;
-                    .item{
-                        cursor: pointer;
-                        padding: 0 10px;
-                        margin-right: 5px;
-                        border: 1px solid rgba(255, 255, 255, 0);
-                        max-width: 120px;
-                        height: 24px;
-                        overflow: hidden;
-                        display: -webkit-box;
-                        -webkit-box-orient: vertical;
-                        -webkit-line-clamp: 1;
-                        line-height: 24px;
-                        font-size: 13px;
-                        // margin-bottom: 10px;
-                        background: #f6f7f8;
-                        border-radius: 3px;
+                    font-size: 22px;
+                    padding: 10px 15px;
+                    .title{
+                        font-size: 16px;
+                        
                     }
-                    .active{
-                        color: #0066ff;
-                        background-color: rgba(0, 102, 255, 0.18);
+                    .icon{
+                        margin-right: 15px;
                     }
                 }
-            }
-            .orderby{
-                margin-top: 10px;
-                display: flex;
-                align-items: center;
-                .text{
-                    text-align: end;
-                    width: 88px;
-                    margin-right: 10px;
-                    font-size: 14px;
-                    color: #b2bac2;
+                .active{
+                    color:#1e80ff;
+                    border-radius: 2px;
+                    background: #eaf2ff!important;
                 }
-                .list{
-                    display: flex;
-                    align-items: center;
-                    .item{
+                .item:hover{
+                    color:#1e80ff;
+                    border-radius: 2px;
+                    background: #f7f8fa!important;
+                }
+                .group{
+                    .group-text{
                         cursor: pointer;
-                        padding: 0 8px;
-                        margin-right: 10px;
-                        border: 1px solid rgba(255, 255, 255, 0);
-                        max-width: 120px;
-                        height: 24px;
-                        overflow: hidden;
-                        display: -webkit-box;
-                        -webkit-box-orient: vertical;
-                        -webkit-line-clamp: 1;
-                        line-height: 24px;
-                        // margin-bottom: 10px;
-                        background: #f6f7f8;
-                        border-radius: 3px;
-                        color: #999;
-                        font-size: 12px;
+                        margin-bottom: 2px;
+                        display: flex;
+                        align-items: center;
+                        font-size: 22px;
+                        padding: 10px 15px;
+                        .text{
+                            font-size: 16px;
+                            
+                        }
+                        .icon{
+                            margin-right: 15px;
+                        }
                     }
-                    .active{
-                        color: #0066ff;
-                        background-color: rgba(0, 102, 255, 0.18);
+                    .group-active{
+                        color:#1e80ff;
                     }
+                    .group-text:hover{
+                        color:#1e80ff;
+                        border-radius: 2px;
+                        background: #f7f8fa!important;
+                    }
+
+                    .group-menu{
+                        .group-item{
+                            cursor: pointer;
+                            margin-bottom: 2px;
+                            display: flex;
+                            align-items: center;
+                            font-size: 22px;
+                            padding: 10px 5px;
+                            font-size: 13px;
+                            padding-left: 55px;
+                            color: #8a919f;
+                        }
+                        .active{
+                            color:#1e80ff;
+                            border-radius: 2px;
+                            background: #eaf2ff!important;
+                        }
+                        .group-item:hover{
+                            color:#1e80ff;
+                            border-radius: 2px;
+                            background: #f7f8fa!important;
+                        }
+                    }
+
                 }
             }
         }
-        .content{
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            background-color: white;
-            border-radius: 4px;
-            min-height: 500px;
-            .loading{
-                padding: 10px 20px;
-                .skeleton-item{
-                    margin-bottom: 20px;
-                }
-            }
-            .empty{
-                min-height: 400px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-            .list{
-                background-color: white;
-                border-radius: 4px;
-                margin-bottom: 20px;
-                .item{      
-                    border-bottom: 1px solid rgba(212, 212, 212, 0.494);
-                    padding: 15px 20px;
-                    display: flex;
-                    .cover{
-                        cursor: pointer;
-                        width: 160px;
-                        display: block;
-                        height: 120px;
+        .right{
+            display: flex;
+            flex: 1;
+            .content{
+                flex: 1;
+                .top{
+                    position: relative;
+                    background-color: white;
+                    padding: 20px 20px 10px 20px;
+                    
+                    .create-info{
+                        border: 2px solid #f5f5f5;
                         border-radius: 4px;
-                        img{
-                            width: 100%;
-                            height: 100%;
-                            border-radius: 4px;
-                            object-fit: cover;
+                        /deep/ .ant-input{
+                            resize : none;
+                            border: 0;
+                            outline: none;
+                            -webkit-box-shadow: none !important;
+                            box-shadow: none !important;
                         }
-                    }
-                    .item-info{
-                        margin-left: 10px;
-                        flex: 1;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        .header{
-                            .user-info-date{
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                .date{
-                                    font-size: 12px;
-                                    color: #999;
-                                }
-                                .avatar-nickname{
-                                    display: flex;
-                                    align-items: center;
-                                    .avatar{
-                                        cursor: pointer;
-                                        height: 20px;
-                                        width: 20px;
-                                        border-radius: 50%;
-                                        img{
-                                            height: 100%;
-                                            width: 100%;
-                                            border-radius: 50%;
-                                        }
-                                    }
-                                    .nickname-grade{
-                                        margin-left: 5px;
-                                        img{
-                                            height: 0.8em;
-                                            max-width: 6em;
-                                            vertical-align: -0.15em;
-                                            backface-visibility: hidden;
-                                            display: inline-block;
-                                        }
-                                        .nickname{
-                                            
-                                            cursor: pointer;
-                                            font-size: 13px;
-                                            color: #999;
-                                        }
-                                    }
-                                }
-                            }
-                            .title{
-                                color: #494b4d;
-                                cursor: pointer;
-                                font-size: 18px;
-                                font-weight: bold;
-                                -webkit-line-clamp: 1;
-                                display: -webkit-box;
-                                -webkit-box-orient: vertical;
-                                overflow: hidden;
-                                word-break: break-all;
-                                margin: 11px 0px;
-                            }
-                            .desc{
-                                width: 100%;
-                                cursor: pointer;
-                                line-height: 24px;
-                                font-size: 12px;
-                                flex: 1;
-                                color: #797C80;
-                                -webkit-line-clamp: 1;
-                                display: -webkit-box;
-                                -webkit-box-orient: vertical;
-                                overflow: hidden;
-                                word-break: break-all;
-                            }
-                        }
-                        .footer{
+                        .create-text-num{
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
-                            .date-action{
-                                display: flex;
-                                align-items: center;
-                                .meta{
+                            padding: 10px;
+                            .select-forum{
+                                .forum-icon{
                                     display: flex;
                                     align-items: center;
-                                    .action-btn{
-                                        margin-left: 10px;
+                                    user-select: none;
+                                    cursor: pointer;
+                                    background: #f5f6f7;
+                                    padding: 0 15px;
+                                    border-radius: 15px;
+                                    .icon{
+                                        margin-right: 2px;
+                                        height: 23px;
                                         display: flex;
                                         align-items: center;
-                                        i{
-                                            font-size: 14px;
-                                        }
-                                        span{
-                                            color: #999;
-                                            font-size: 12px;
-                                            margin-left: 5px;
+                                        justify-content: center;
+                                        text-align: center;
+                                    }
+                                    .title{
+                                        height: 23px;
+                                        font-size: 12px;
+                                        color: #ff3a55;
+                                        font-weight: 400;
+                                        line-height: 23px;
+                                        text-align: center;
+                                }
+                                }
+                                .byte-popover{
+                                    width: 360px;
+                                    max-width: none;
+                                    z-index: 1092;
+                                    position: absolute;
+                                    will-change: transform;
+                                    top: 0px;
+                                    left: 0px;
+                                    transform: translate3d(20px, 198px, 0px);
+                                
+                                    .popover-content{
+                                        .forum-picker{
+                                            background-color: #fff;
+                                            border: 1px solid #e4e6eb;
+                                            border-radius: 4px;
+                                            .search{
+                                                padding: 16px;
+                                                /deep/ .ant-input{
+                                                    resize : none;
+                                                    border: 0;
+                                                    outline: none;
+                                                    -webkit-box-shadow: none !important;
+                                                    box-shadow: none !important;
+                                                    background: #f2f3f5;
+                                                }
+                                            }
+                                            .wrapper{
+                                                display: flex;
+                                                height: 352px;
+                                                max-height: calc(80vh - 300px);
+                                                border-top: 1px solid #e4e6eb;
+                                                .cate-menu{
+                                                    overflow: auto;
+                                                    width: 88px;
+                                                    border-top: 1px solid #e4e6eb;
+                                                    background: #f2f3f5;
+                                                    flex-shrink: 0;
+                                                    .cate-item{
+                                                        position: relative;
+                                                        line-height: 48px;
+                                                        text-align: center;
+                                                        color: #8a919f;
+                                                        cursor: pointer;
+                                                        white-space: nowrap;
+                                                        overflow: hidden;
+                                                        text-overflow: ellipsis;
+                                                        word-break: break-all;
+                                                    }
+                                                    .active{
+                                                        color: #1e80ff;
+                                                        background: #eaf2ff;
+                                                    }
+                                                    .active::after{
+                                                        content: "";
+                                                        position: absolute;
+                                                        top: 14px;
+                                                        right: 0;
+                                                        width: 2px;
+                                                        height: 20px;
+                                                        background: #1e80ff;
+                                                    }
+                                                }
+                                                .forum-list{
+                                                    padding: 7px 0;
+                                                    flex-grow: 1;
+                                                    border-bottom: 1px solid #e4e6eb;
+                                                    overflow-y: auto;
+                                                    .forum-item{
+                                                        display: flex;
+                                                        cursor: pointer;
+                                                        align-items: center;
+                                                        padding: 9px 0;
+                                                        .cover{
+                                                            width: 48px;
+                                                            height: 48px;
+                                                            border-radius: 4px;
+                                                            margin: 0 15px;
+                                                            img{
+                                                                border-radius: 4px;
+                                                                width: 100%;
+                                                                height: 100%;
+                                                                object-fit: cover;
+                                                            }
+                                                        }
+                                                        .forum-info{
+                                                            padding-right: 15px;
+                                                            .forum-title{
+                                                                font-weight: 500;
+                                                                font-size: 16px;
+                                                                line-height: 28px;
+                                                                color: #252933;
+                                                                margin: 0;
+                                                                display: -webkit-box;
+                                                                overflow: hidden;
+                                                                text-overflow: ellipsis;
+                                                                -webkit-box-orient: vertical;
+                                                                -webkit-line-clamp: 1;
+                                                            }
+                                                            .desc{
+                                                                font-size: 14px;
+                                                                line-height: 24px;
+                                                                color: #8a919f;
+                                                                margin: 0;
+                                                            }
+                                                        }
+                                                    }
+                                                    .forum-item:hover{
+                                                            background: #f7f8fa;
+                                                    }
+                                                }
+                                            }
+                                            .search-list{
+                                                padding: 7px 0;
+                                                flex-grow: 1;
+                                                border-bottom: 1px solid #e4e6eb;
+                                                overflow-y: auto;
+                                                height: 352px;
+                                                max-height: calc(80vh - 300px);
+                                                .forum-item{
+                                                    display: flex;
+                                                    cursor: pointer;
+                                                    align-items: center;
+                                                    padding: 9px 0;
+                                                    .cover{
+                                                        width: 48px;
+                                                        height: 48px;
+                                                        border-radius: 4px;
+                                                        margin: 0 15px;
+                                                        img{
+                                                            border-radius: 4px;
+                                                            width: 100%;
+                                                            height: 100%;
+                                                            object-fit: cover;
+                                                        }
+                                                    }
+                                                    .forum-info{
+                                                        padding-right: 15px;
+                                                        .forum-title{
+                                                            font-weight: 500;
+                                                            font-size: 16px;
+                                                            line-height: 28px;
+                                                            color: #252933;
+                                                            margin: 0;
+                                                            display: -webkit-box;
+                                                            overflow: hidden;
+                                                            text-overflow: ellipsis;
+                                                            -webkit-box-orient: vertical;
+                                                            -webkit-line-clamp: 1;
+                                                        }
+                                                        .desc{
+                                                            font-size: 14px;
+                                                            line-height: 24px;
+                                                            color: #8a919f;
+                                                            margin: 0;
+                                                        }
+                                                    }
+                                                }
+                                                .forum-item:hover{
+                                                        background: #f7f8fa;
+                                                }
+                                            }
+                                            .btn-box{
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: flex-end;
+                                                height: 68px;
+                                                width: 100%;
+                                                box-sizing: border-box;
+                                                padding: 0 16px; 
+                                                .no-select{
+                                                    user-select: none;
+                                                    background: rgba(30, 128, 255, .05);
+                                                    border: 1px solid rgba(30, 128, 255, .3);
+                                                    box-sizing: border-box;
+                                                    border-radius: 4px;
+                                                    text-align: center;
+                                                    color: #1e80ff;
+                                                    width: 96px;
+                                                    line-height: 36px;
+                                                    cursor: pointer;
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                                .btn{
-                                    display: flex;
-                                    align-items: center;
-                                    border-radius: 4px;
-                                    font-size: 14px;
-                                    .tag{
-                                        padding: 5px 10px;
-                                        display: inline-block;
-                                        letter-spacing: 1px;
-                                        white-space: nowrap;
+                                    .popper-arrow{
+                                        left: 52px;
+                                        background-color:#fff;
+                                        border-left-color: transparent;
+                                        border-bottom-color: transparent;
+                                        border-right-color: #e4e6eb;
+                                        border-top-color: #e4e6eb;
+                                        width: 8px;
+                                        height: 8px;
+                                        border-width: 1px;
+                                        border-style: solid;
+                                        transform: rotate(-45deg);
+                                        position: absolute;
+                                        top: -4px;
+                                        margin-top: 0;
+                                        margin-bottom: 0;
                                     }
                                 }
                             }
-                            .tags{
-                                display: flex;
-                                align-items: center;
-                                .cate{
-                                    cursor: pointer;
-                                    user-select: none;
-                                    margin-right: 10px;
-                                    color: #2997f7;
-                                    font-size: 11px;
-                                    font-style: normal;
-                                    display: inline-block;
-                                    background-color:rgba(41, 151, 247, 0.1);
-                                    transform: scale(1);
-                                    padding: 6px 6px;
-                                    border-radius: 3px;
-                                    text-transform: capitalize;
-                                }
-                                .game{
-                                    cursor: pointer;
-                                    user-select: none;
-                                    margin-right: 10px;
-                                    color: #ff3f9f;
-                                    font-size: 11px;
-                                    font-style: normal;
-                                    display: inline-block;
-                                    background-color:rgba(255, 63, 159, .1);
-                                    transform: scale(1);
-                                    padding: 6px 6px;
-                                    border-radius: 3px;
-                                    text-transform: capitalize;
+                            /deep/ .ant-progress{
+                                /deep/ .ant-progress-text{
+                                    font-size:10px;
+                                        transform: translate(-50%, -50%) scale(0.8);
                                 }
                                 
                             }
                         }
                     }
                 }
-                .item:hover{
-                    border-radius: 4px;
-                    background: rgba(145, 145, 145, 0.083);
-                }
             }
-            .nomore{
-                display: flex;
-                justify-content: center;
-                font-size: 12px;
-                color: #888;    
-                padding: 20px 0;
-                margin-top: 10px;
+            .sidebar{
+                width: 260px;
             }
         }
     }
