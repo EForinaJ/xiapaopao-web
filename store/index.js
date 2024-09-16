@@ -11,7 +11,8 @@ import api from "@/api/index"
 export const state = () => ({
     design:{
         width:1200,
-        layout:"default" //home default
+        layout:"default", //home default
+        theme: true
     },
     base:{
         title:"",
@@ -34,8 +35,8 @@ export const mutations = {
     M_UPDATE_PAY: (state, pay) => {
         state.pay = pay
     },
-    M_UPDATE_BASE_THEME: (state, theme) => {
-        state.base.theme = theme
+    M_UPDATE_THEME: (state, theme) => {
+        state.design.theme = theme
     },
 }  
 
@@ -49,9 +50,9 @@ export const actions = {
         commit("M_UPDATE_PAY",systemInfo.data.info.pay)
 
 
-        const forumRes = await $axios.get(api.getForumAll)
-        commit("forum/M_UPDATE_LIST",forumRes.data.list)
-        commit("forum/M_UPDATE_INFO",forumRes.data.list[0])
+        // const forumRes = await $axios.get(api.getForumAll)
+        // commit("forum/M_UPDATE_LIST",forumRes.data.list)
+        // commit("forum/M_UPDATE_INFO",forumRes.data.list[0])
 
         // 初始化token到里面
         let token = $cookies.get("xpp-token") ? $cookies.get("xpp-token") : null
@@ -67,7 +68,8 @@ export const actions = {
             commit("notice/M_UPDATE_HAVE_NOTICE",noticeRes.data.info)
         }
     },
-    A_UPDATE_BASE_THEME({commit},theme){
-        commit('M_UPDATE_BASE_THEME', theme)
+    A_UPDATE_THEME({commit},theme){
+        commit('M_UPDATE_THEME', theme)
     },
+    
 }

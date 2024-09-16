@@ -45,7 +45,7 @@ export default {
     methods: {
         async confirm(userId) {
             this.receiver = userId
-            this.module = module
+            // this.module = module
             this.open();
             return new Promise((resolve, reject) => {
                 const target = { state: 'prepare'};

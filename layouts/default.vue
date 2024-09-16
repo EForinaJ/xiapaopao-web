@@ -3,11 +3,6 @@
   <div  class="header" >
       <div class="header-top" >
         <div class="header-top-menu" :style="{width:design.width+'px'}">
-          <ul class="top-menu">
-            <li  v-for="(item,index) in forumList" :key="index" :style="{ backgroundImage: `url(${item.cover})` }" class="item">
-              {{item.title}}
-            </li>
-          </ul>
           <a-input-search 
             v-model="keyword"
             placeholder="请输入搜索内容" 
@@ -21,7 +16,7 @@
                 <img :src="base.logo" :alt="base.title">
               </div> -->
               <div class="logo-text">
-                爱派克斯
+                {{base.title}}
               </div>
               <ul class="menu">
                 <li :class="selectedKeys[0] == '' ? 'active item' : 'item'">
@@ -29,9 +24,14 @@
                     首页
                   </nuxt-link>
                 </li>
-                <li :class="selectedKeys[0] == '/articles' ? 'active item' : 'item'" >
-                  <nuxt-link  :to="`/articles`">
-                    文章
+                <li :class="selectedKeys[0] == '/player' ? 'active item' : 'item'" >
+                  <nuxt-link  :to="`/player`">
+                    玩家
+                  </nuxt-link>
+                </li>
+                <!-- <li :class="selectedKeys[0] == '/wiki' ? 'active item' : 'item'" >
+                  <nuxt-link  :to="`/wiki`">
+                    百科
                   </nuxt-link>
                 </li>
                 <li :class="selectedKeys[0] == '/tools' ? 'active item' : 'item'" >
@@ -44,7 +44,7 @@
                       About
                     <small class="small shop-tips">Me</small>
                   </nuxt-link>
-                </li>
+                </li> -->
               </ul>
             </div>
             <div class="user-search">

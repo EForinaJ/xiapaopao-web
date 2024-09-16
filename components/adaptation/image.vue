@@ -1,7 +1,7 @@
 <template>
     <div class="iamge">
         <div v-if="list.length == 1" class="image-one">
-            <img @click="show(0)" :src="list[0]| resetImage(195,160)" alt="">
+            <img @click="show(0)" :src="list[0]" alt="">
         </div>
         <div v-if="list.length == 2" class="image-two">
             <img @click="show(0)" :src="list[0] | resetImage(195,160)" alt="">
@@ -47,8 +47,9 @@ export default {
 .iamge{
     margin-top: 10px;
     .image-one{
-        width: 33.333%;
+        width: 50%;
         img{
+            border-radius: 4px;
             cursor: pointer;
             width: 100%;
         }

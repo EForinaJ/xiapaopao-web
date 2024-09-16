@@ -1,5 +1,5 @@
 <template>
-<div class="siber-box">
+<div class="widget">
     <div class="text">
         <h2>热门用户</h2>
     </div>
@@ -58,7 +58,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.siber-box{
+.widget{
     background: white;
     border-radius: 4px;
     margin-bottom: 15px;
@@ -89,8 +89,8 @@ export default {
                 padding-bottom: 15px;
                 display: flex;
                 .avatar{
-                    height: 50px;
-                    width: 50px;
+                    height: 35px;
+                    width: 35px;
                     border-radius: 4px;
                     img{
                         border-radius: 4px;
@@ -104,12 +104,12 @@ export default {
                     flex-direction: column;
                     justify-content: space-between;
                     display: flex;
-                    padding: 5px 0;
+                    
                     .nickname-grade{
                         display: flex;
                         align-items: center;
                         h2{
-                            font-size: 16px;
+                            font-size: 13px;
                             font-weight: 600;
                             line-height: 20px;
                             max-width: 100%;

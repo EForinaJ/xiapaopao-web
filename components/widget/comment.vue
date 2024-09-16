@@ -1,5 +1,5 @@
 <template>
-    <div class="siber-box">
+    <div class="widget">
         <div class="text">
             <h2>最新评论</h2>
         </div>
@@ -7,17 +7,21 @@
             <ul class="list">
                 <li v-for="(item,index) in list" :key="index" class="item">
                     <div class="avatar-nickname-date">
+                        <div @click="goPath(`/user/${item.userInfo.id}`)"  v-if="item.userInfo.avatar" class="avatar">
+                            <img :src="item.userInfo.avatar | resetImage(32,32)" alt="">
+                        </div>
                         <div class="avatar-nickname">
-                            <div @click="goPath(`/user/${item.userInfo.id}`)"  v-if="item.userInfo.avatar" class="avatar">
-                                <img :src="item.userInfo.avatar | resetImage(32,32)" alt="">
+                            <div @click="goPath(`/user/${item.userInfo.id}`)" class="nickname-grade">
+                                <h2>{{item.userInfo.nickName}}</h2>
+                                <div class="grade">
+                                    <img :src="item.userInfo.grade.icon" alt="">
+                                </div>
                             </div>
-                            <h2 @click="goPath(`/user/${item.userInfo.id}`)" >
-                                {{item.userInfo.nickName}}
-                            </h2>
+                            <div class="date">
+                                {{item.createTime | resetData}} 
+                            </div>
                         </div>
-                        <div class="date">
-                            {{item.createTime | resetData}} 
-                        </div>
+                        
                     </div>
                     <div @click="goContentPath(item)"  class="content">
                         <p> {{item.content}} </p>
@@ -40,7 +44,7 @@ export default {
             list: [],
             queryParam: {
                 page: 1,
-                limit: 3,
+                limit: 5,
             },
         }
     },
@@ -81,7 +85,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.siber-box{
+.widget{
     background: white;
     border-radius: 4px;
     margin-bottom: 15px;
@@ -111,35 +115,55 @@ export default {
                 padding-bottom: 15px;
                 .avatar-nickname-date{
                     display: flex;
-                    justify-content: space-between;
+                    
                     align-items: center;
+                    .avatar{
+                        margin-right: 10px;
+                        cursor: pointer;
+                        border-radius: 4px;
+                        width: 32px;
+                        height: 32px;
+                        img{
+                            border-radius: 4px;
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    }
                     .avatar-nickname{
                         display: flex;
                         align-items: center;
-                        .avatar{
-                            cursor: pointer;
-                            border-radius: 4px;
-                            width: 32px;
-                            height: 32px;
-                            img{
-                                border-radius: 4px;
-                                width: 100%;
-                                height: 100%;
-                                object-fit: cover;
+                        justify-content: space-between;
+                        flex: 1;
+                        .nickname-grade{
+                            h2{
+                                font-size: 13px;
+                                font-weight: 600;
+                                line-height: 20px;
+                                max-width: 100%;
+                                display: -webkit-box;
+                                -webkit-box-orient: vertical;
+                                -webkit-line-clamp: 1;
+                                overflow: hidden;
+                                height: 20px;
+                            }
+                            .grade{
+                                img{
+                                    height: 0.8em;
+                                    max-width: 6em;
+                                    vertical-align: -0.15em;
+                                    backface-visibility: hidden;
+                                    display: inline-block;
+                                }
                             }
                         }
-                        h2{
-                            cursor: pointer;
-                            margin-left: 5px;
-                            font-size: 14px;
-                            letter-spacing: 2px;
+                        .date{
+                            color: #999;
+                            font-size: 12px;
+                            letter-spacing: 1px;
                         }
                     }
-                    .date{
-                        color: #999;
-                        font-size: 12px;
-                        letter-spacing: 2px;
-                    }
+                    
                 }
                 .content{
                     cursor: pointer;
