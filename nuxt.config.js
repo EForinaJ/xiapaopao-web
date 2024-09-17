@@ -144,6 +144,7 @@ export default {
     '~/static/css/reset.css',
     '~/static/css/variable.less',
     '~/static/css/main.less',
+    'swiper/css/swiper.css' // 加入swiper样式
   ],
 
   loading:false,

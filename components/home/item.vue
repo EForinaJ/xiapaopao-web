@@ -1,92 +1,97 @@
 <template>
     <div class="item">
         <div class="avatar">
-            <a-avatar :size="55" src="https://cbec.com.cn/wp-content/uploads/2024/07/2024072601451758.jpg" />
+            <a-avatar @click="goPath(`/user/${info.userInfo.id}`)" :size="55" :src="info.userInfo.avatar" />
         </div>
         <div class="post-info">
             <div class="user-info">
                 <div class="name-grade">
                     <div class="name-mate">
-                        <div class="name">
-                            用户名称
+                        <div @click="goPath(`/user/${info.userInfo.id}`)" class="name">
+                            {{info.userInfo.nickName}}
                         </div>
-                        <div class="grade">
-                            <img src="https://oss.zibll.com/zibll.com/zibll-img/img/user-level-3.png">
+                        <div v-if="info.userInfo.grade != null" class="grade">
+                            <img :src="info.userInfo.grade.icon">
                         </div>
                     </div>
                     <div class="date-view">
                         <a-tooltip>
                             <template slot="title">
-                            2024-15-2654
+                                {{info.createTime}}
                             </template>
-                            9小时前发布
+                            {{info.createTime | resetData}}
                         </a-tooltip>
                         <a-divider type="vertical" />
-                        <span>28次阅读</span>
+                        <span>{{info.views | resetNum }}次阅读</span>
                     </div>
                 </div>
                 <div class="report">
                     <a-dropdown placement="bottomCenter">
                         <a-icon type="more" />
                         <a-menu slot="overlay">
-                            <a-menu-item key="0">
+                            <a-menu-item @click="report" key="0">
                                 <a-icon type="exclamation-circle" /> 举报
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown>
                 </div>
             </div>
-            <div class="title">
-                提问，文本参数里的标签要怎么打开
+            <div @click="goPath(`/post/${info.id}`)" v-if="info.title != ''" class="title">
+                {{info.title}}
             </div>
-            <div class="content">
+            <div @click="goPath(`/post/${info.id}`)" v-if="info.content != ''" class="content">
                 <!-- <span class="topic">
                     <FIcon class="icon" :size="12" type="icon-huati1"/>
                     <span>话题</span>
                     <FIcon class="icon" :size="12" type="icon-huati1"/>
                 </span> -->
                 <span>
-                    用户A设置提问【谁知道如何子比主题搭建网站】用户A设置提问单价为3元，有效期为24–48小时求回复答案，网站扣除用户A的3元余额，超过时间没人解答则退回余额给用户A，用户A只需在等其他人解答自己的问题，这时候如果用户B进行回复，如果用户A采纳了用户B的答案，
+                    {{info.content}}
                 </span>
             </div>
-            <div class="images">
-                <ImageAdaptation :list="[
-                    'https://cbec.com.cn/wp-content/uploads/2024/07/2024072601451758.jpg',
-                ]"/>
+            <div v-if="info.images.length > 0" class="images">
+                <ImageAdaptation :list="info.images"/>
             </div>
-            <div class="resource">
+            <div @click="goPath(`/post/${info.id}`)" v-if="info.setResource == 2" class="resource">
                 <div class="icon">
                     <FIcon :size="18" type="icon-xiazai"/>
                 </div>
                 <div class="text">
-                    查看资源查看资源查看资源查看资查看资源查看资源查看资源查看资
+                    查看资源
                 </div>
             </div>
             <div class="footer">
-                <div class="forum">
+                <div @click="goPath(`/forum/${info.forum.id}`)" v-if="info.forum != null" class="forum">
                     <FIcon class="icon" :size="16" type="icon-a-faxianquanzi"/>
                     <span class="forum-text">
-                        圈子标题
+                        {{info.forum.title}}
                     </span>
                 </div>
                 <div class="action">
-                    <div class="btn">
+                    <div @click="like" class="btn">
                         <div class="icon">
-                            <a-icon type="like" />
+                            <a-icon v-if="info.isLike" type="dislike" />
+                            <a-icon v-if="!info.isLike" type="like" />
                         </div>
-                        <div class="text">
+                        <div v-if="info.likes > 0" class="text">
+                            {{info.likes | resetNum }}
+                        </div>
+                        <div v-if="info.likes == 0" class="text">
                             点赞
                         </div>
                     </div>
-                    <div class="btn">
+                    <div @click="goPath(`/post/${info.id}?#comment`)" class="btn">
                         <div class="icon">
                             <a-icon type="message" />
                         </div>
-                        <div class="text">
+                        <div v-if="info.comments > 0" class="text">
+                            {{info.comments | resetNum }}
+                        </div>
+                        <div v-if="info.comments == 0" class="text">
                             评论
                         </div>
                     </div>
-                    <div class="btn">
+                    <div @click="share" class="btn">
                         <div class="icon">
                             <a-icon type="share-alt" />
                         </div>
@@ -104,10 +109,112 @@
 <script>
 import ImageAdaptation from "@/components/adaptation/image"
 import FIcon from '@/components/icon/FIcon'
+import api from "@/api/index"
+import { mapState } from "vuex"
 export default {
+    props:{ 
+        info:{
+            type: Object, //指定传入的类型
+            default: null //这样可以指定默认的值
+        },
+    },
     components:{
         ImageAdaptation,
         FIcon
+    },
+    computed:{
+        ...mapState(["base"]),
+        ...mapState("user",["token","accountInfo"]),
+    },
+    methods:{
+        goPath(path){
+            this.$router.push(path)
+        },
+        async like(){
+            if (this.token == null) {
+                this.$Auth("login","登录","快速登录")
+                return
+            }
+            if (!this.accountInfo.grade.auth.includes("like")) {
+                this.$message.error(
+                    "你的等级还无此权限",
+                    3
+                )
+                return
+            }
+
+            this.info.isLike = !this.info.isLike
+            this.info.likes = parseInt(this.info.likes)
+            if (this.info.isLike) {
+                this.info.likes =  this.info.likes + 1
+            } else {
+                this.info.likes =  this.info.likes - 1
+            }
+            const query = {
+                id:this.info.id
+            }
+            const res = await this.$axios.post(api.postPostLike,query)
+            if (res.code != 1) {
+                this.$message.error(
+                    res.message,
+                    3
+                )
+                if (this.info.id == this.id) {
+                    this.info.isLike = !this.info.isLike
+                        if (this.info.isLike) {
+                            this.info.likes =  this.info.likes + 1
+                        } else {
+                            this.info.likes =  this.info.likes - 1
+                        }
+                    }
+                return
+            }
+        },
+        async favorite(){
+            if (this.token == null) {
+                this.$Auth("login","登录","快速登录")
+                return
+            }
+            if (!this.accountInfo.grade.auth.includes("favorite")) {
+                this.$message.error(
+                    "你的等级还无此权限",
+                    3
+                )
+                return
+            }
+
+            this.info.isFavorite = !this.info.isFavorite
+            if (this.info.isFavorite) {
+                this.info.favorites =  this.info.favorites + 1
+            } else {
+                this.info.favorites =  this.info.favorites - 1
+            }
+            const query = {
+                id:this.info.id
+            }
+            const res = await this.$axios.post(api.postPostFavorite,query)
+            if (res.code != 1) {
+                 this.$message.error(
+                    res.message,
+                    3
+                )
+                if (this.info.id == this.id) {
+                this.info.isFavorite = !this.info.isFavorite
+                    if (this.info.isFavorite) {
+                        this.info.favorites =  this.info.favorites + 1
+                    } else {
+                        this.info.favorites =  this.info.favorites - 1
+                    }
+                }
+                return
+            }
+        },
+        share(){
+            this.$Share(`${this.base.url}/post/${this.info.id}`,this.info.title,this.info.description,this.info.cover)
+        },
+        report(){
+            this.$Report(this.info.id,"post")
+        },
     }
 }
 </script>
@@ -121,6 +228,7 @@ export default {
     margin-bottom: 20px;
     .avatar{
         margin-right: 20px;
+        cursor: pointer;
     }
     .post-info{
         flex: 1;
@@ -134,6 +242,7 @@ export default {
                     display: flex;
                     align-items: center;
                     .name{
+                        cursor: pointer;
                         font-size: 16px;
                         font-weight: 600;
                     }

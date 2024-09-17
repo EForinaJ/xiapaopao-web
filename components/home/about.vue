@@ -9,6 +9,12 @@
             </div>
             <a-icon type="right" />
         </div>
+        <div class="system">
+            <div class="text">
+                后台管理地址
+            </div>
+            <a-icon type="right" />
+        </div>
         <div class="desc">
             如果发现有人使用本程序从事违法活动，请举报：
             973728679@qq.com

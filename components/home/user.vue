@@ -1,64 +1,56 @@
 <template>
     <div class="widget">
-        <div class="cover" style="background-image: url(https://cbec.com.cn/wp-content/uploads/2024/07/2024081902504971.jpg);"> </div>
+        <div class="cover" :style="`background-image: url(${accountInfo.cover});`"> </div>
         <div class="info">
             <div class="avatar-name">
-                <div class="avatar">
-                    <a-avatar :size="45" src="https://cbec.com.cn/wp-content/uploads/2024/07/2024081402434259.jpg" shape="square"/>
+                <div @click="goPath(`/user/${accountInfo.id}`)" class="avatar">
+                    <a-avatar :size="45" :src="accountInfo.avatar"/>
                 </div>
                 <div class="name-grade">
-                    <div class="name">
-                        用户名称
+                    <div @click="goPath(`/user/${accountInfo.id}`)" class="name">
+                        {{accountInfo.nickName}}
                     </div>
-                    <div class="grade">
-                        <img src="https://oss.zibll.com/zibll.com/zibll-img/img/user-level-3.png">
+                    <div v-if="accountInfo.grade != null" class="grade">
+                        <img :src="accountInfo.grade.icon">
                     </div>
                 </div>
             </div>
             <div class="mate">
                 <div class="dis">
                     <p>帖子</p>
-                    <span>10</span>
+                    <span>{{accountInfo.posts | resetNum}}</span>
                 </div>
                 <div class="dis">
                     <p>获赞</p>
-                    <span>10</span>
+                    <span>{{accountInfo.likes | resetNum}}</span>
                 </div>
                 <div class="dis">
                     <p>粉丝</p>
-                    <span>10</span>
+                    <span>{{accountInfo.fans | resetNum}}</span>
                 </div>
                 <div class="dis">
                     <p>关注</p>
-                    <span>10</span>
+                    <span>{{accountInfo.follows | resetNum}}</span>
                 </div>
             </div>
         </div>
         <div class="announcement">
             <ul class="list">
-                <li class="item">
+                <li @click="goPath(`/announcement/${item.id}`)" v-for="(item,index) in list" :key="index" class="item">
                     <span class="agc">公告</span>
-                    <span class="text">WordPress轻社交购物主题：B2Pro_3.4.1 + APP插件_1.1.0+uniapp源码_1.1.0（微信小程序）更新通知</span>
-                </li>
-                <li class="item">
-                    <span class="agc">公告</span>
-                    <span class="text">WordPress轻社交购物主题：B2Pro_3.4.1 + APP插件_1.1.0+uniapp源码_1.1.0（微信小程序）更新通知</span>
-                </li>
-                <li class="item">
-                    <span class="agc">公告</span>
-                    <span class="text">WordPress轻社交购物主题：B2Pro_3.4.1 + APP插件_1.1.0+uniapp源码_1.1.0（微信小程序）更新通知</span>
+                    <span class="text">{{item.title}}</span>
                 </li>
             </ul>
         </div>
-        <div class="more">
+        <div @click="goPath(`/announcement`)" class="more">
             全部公告
         </div>
-        <div class="sign">
+        <div @click="signIn" class="sign">
             <div class="icon">
                 <FIcon class="icon" :size="16" type="icon-qiandaoyouli"/>
             </div>
             <div class="text">
-                立即签到
+                {{accountInfo.isSign ? "已签到" : "立即签到"}}
             </div>
         </div>
     </div>
@@ -66,10 +58,73 @@
 
 
 <script>
+import { mapState,mapActions } from "vuex"
 import FIcon from '@/components/icon/FIcon'
+import api from "@/api/index"
 export default {
+    computed:{
+        ...mapState("user",["token","accountInfo"]),
+    },
     components:{
         FIcon
+    },
+    data(){
+        return{
+            list:[],
+        }
+    },
+    mounted(){
+        this.getList()
+    },
+    methods:{
+        ...mapActions("user",["A_UPDATE_SIGN","A_UPDATE_INTEGRAL"]),
+        
+        async getList(){
+            let query = {
+                page: 1,
+                limit: 3,
+            }
+            const res = await this.$axios.get(api.getAnnouncementList,{params: query})
+            if (res.code != 1) {
+                this.$message.error(
+                    res.message,
+                    3
+                )
+                return
+            }
+            this.list = res.data.list ?? [] 
+        },
+        async signIn(){
+            if (this.token == null) {
+                this.$Auth("login","登录","快速登录")
+                return
+            }
+            if(this.accountInfo.isSign){
+                this.$message.error(
+                    "已经签到过了",
+                    3
+                )
+                return
+            }
+
+            const res = await this.$axios.post(api.postAccountSign)
+            if (res.code != 1) {
+                this.$message.error(
+                    res.message,
+                    3
+                )
+                return
+            }
+            this.$message.success(
+                "获得"+res.data.num+"经验",
+                3
+            )
+            this.A_UPDATE_SIGN(true)
+            this.A_UPDATE_INTEGRAL(this.accountInfo.integral + res.data.num)
+        },
+        goPath(path){
+            this.$router.push(path)
+        },
     }
 }
 </script>
@@ -99,9 +154,12 @@ export default {
             display: flex;
             align-items: center;
             .avatar{
+                cursor: pointer;
                 margin-right: 10px;
             }
             .name-grade{
+                flex: 1;
+                cursor: pointer;
                 .name{
                     font-size: 16px;
                     font-weight: 600;
@@ -157,7 +215,7 @@ export default {
         padding: 10px 0;
         .list{
             .item{
-                
+                cursor: pointer;
                 display: flex;
                 align-items: center;
                 padding: 16px 20px;

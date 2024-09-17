@@ -303,7 +303,7 @@
                     </div>
                 </div>
             </div>
-            <div class="create-btn">
+            <div @click="submit" class="create-btn">
                 发布帖子
             </div>
 
@@ -358,6 +358,7 @@ export default {
     },
     computed:{
         ...mapState(["design"]),
+        ...mapState("user",["token"]),
     },
     data(){
         return{
@@ -379,16 +380,14 @@ export default {
             openLink:false,
             form:{
                 title:undefined,
-                description:undefined,
                 images:[],
-                categoryId:undefined,
                 forumId:undefined,
                 tags:[],
                 content:"",
                 cover: "",
                 module: "",
                 relatedId: 0,
-                setResource: false,
+                setResource: 1,
                 resource:{
                     title:undefined,
                     example:undefined,
@@ -421,6 +420,112 @@ export default {
         this.loading = false
     },
     methods:{
+        submit(){
+            if (this.token == null) {
+                this.$Auth("login","登录","快速登录")
+                return
+            }
+            // 判断标题是否为空
+            if (this.form.content === "" || this.form.content == null || this.form.content == undefined) {
+                this.$message.error(
+                    "请输入内容",
+                    3
+                )
+                return
+            }
+            if (this.form.images.length > 9) {
+                this.$message.error(
+                    "请不要上传超过9张图片",
+                    3
+                )
+                return
+            }
+            
+            
+            // if (this.form.tags.length > 5) {
+            //     this.$message.error(
+            //         "请勿设置超出5个标签",
+            //         3
+            //     )
+            //     return
+            // }
+            
+            if (this.form.setResource && this.form.resource.mode == 4) {
+                if (this.form.resource.integral == 0 || this.form.resource.integral == null || this.form.resource.integral == undefined) {
+                    this.$message.error(
+                        "请设置兑换积分",
+                        3
+                    )
+                    return
+                }
+            }
+
+            if (this.form.setResource && this.form.resource.mode == 5) {
+                if (this.form.resource.money == 0 || this.form.resource.money == null || this.form.resource.money == undefined) {
+                    this.$message.error(
+                        "请设置费用",
+                        3
+                    )
+                    return
+                }
+                
+            }
+
+            if (this.form.setResource && this.form.resource.mode == 3) {
+                if (this.form.resource.grade == 0 || this.form.resource.grade  == null || this.form.resource.grade  == undefined) {
+                    this.$message.error(
+                        "请设置等级",
+                        3
+                    )
+                    return
+                }
+                
+            }
+            this.form.content = this.form.content.replace(/\n/g,"<br/>");  
+      
+
+            this.postCreate(this.form)
+
+        },
+        async postCreate(formData){
+            try {
+                const res = await this.$axios.post(api.postPostCreate,formData)
+                if (res.code != 1) {
+                    this.$message.error(
+                        res.message,
+                        3
+                    )
+                    return
+                }
+                this.$message.success(
+                    "发布帖子成功",
+                    3
+                )
+                this.form.title = undefined
+                this.form.content = undefined
+                this.form.images = []
+                this.form.setResource = 1
+                this.form.resource.title = undefined
+                this.form.resource.example = undefined
+                this.form.resource.mode = undefined
+                this.form.resource.integral = undefined
+                this.form.resource.money = undefined
+                this.form.resource.grade = undefined
+                this.form.resource.attr = []
+                this.form.resource.gainCode = undefined
+                this.form.resource.untieCode = undefined
+                this.form.resource.link = undefined
+                this.$emit("create")
+            } catch (error) {
+                (error)
+                setTimeout(() => {
+                    this.$notification.error({
+                        message: '网络错误',
+                        description: "请稍后再试"
+                    })
+                }, 1000)
+            }
+        },
         async getCategroy(){
             const res = await this.$axios.get(api.getCategoryAll,
                 {
@@ -437,11 +542,12 @@ export default {
             this.categoryList = res.data.list ?? []
         },
         async getForum(params){
-            const res = await this.$axios.get(api.getForumAll,
+            const res = await this.$axios.get(api.getForumList,
                 {
                     params:params
                 }
             )
+            
             if (res.code != 1) {
                 this.$message.error(
                     res.message,
@@ -504,6 +610,7 @@ export default {
         },
         closeForumPanel(){
             this.selectForumObj = null
+            this.form.forumId = undefined
             this.openForum = !this.openForum
         },
         onSearch(){
@@ -598,6 +705,16 @@ export default {
                 this.form.setResource = 2
             }else{
                 this.form.setResource = 1
+                this.form.resource.title = undefined
+                this.form.resource.example = undefined
+                this.form.resource.mode = undefined
+                this.form.resource.integral = undefined
+                this.form.resource.money = undefined
+                this.form.resource.grade = undefined
+                this.form.resource.attr = []
+                this.form.resource.gainCode = undefined
+                this.form.resource.untieCode = undefined
+                this.form.resource.link = undefined
             }
         },
         addAttr(){

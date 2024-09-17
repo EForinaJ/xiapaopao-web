@@ -13,7 +13,7 @@
                 <FIcon class="icon" :size="20" type="icon-remen"/>
                 <span class="title">热门</span>
             </li>
-            <div class="group" >
+            <div v-if="token != null" class="group" >
                 <div :class="myForumKey != 0 ? 'group-text active' : 'group-text'">
                     <FIcon class="icon" :size="20" type="icon-huati"/>
                     <span class="text">我的圈子</span>
@@ -61,6 +61,7 @@ export default {
     },
     computed:{
         ...mapState(["design"]),
+        ...mapState("user",["token"]),
     },
     data(){
         return{
@@ -72,7 +73,11 @@ export default {
         }
     },
     mounted(){
-        this.getMyList()
+        if (this.token != null) {
+            this.getMyList()
+        }
+        
+
         this.getTopList()
     },
     methods:{
@@ -112,16 +117,20 @@ export default {
             this.menuKey = 0
             this.myForumKey = e.id
             this.topForumKey = 0
+            this.$emit("changeForum",e.id)
         },
         selectTopForum(e){
             this.menuKey = 0
             this.myForumKey = 0
             this.topForumKey = e.id
+            this.$emit("changeForum",e.id)
         },
         selectMenu(e){
             this.menuKey = e
             this.myForumKey = 0
             this.topForumKey = 0
+
+            this.$emit("changeMode",e)
         }
     }
 }
@@ -129,6 +138,8 @@ export default {
 
 <style lang="less" scoped>
 .hot-forum{
+    max-height: calc(100vh - 40px);
+    
     margin-bottom: 15px;
     top: 80px;
     position: sticky;

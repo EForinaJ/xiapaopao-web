@@ -20,6 +20,7 @@ const api = {
     getCategoryAll: web + "/category/all",
     getGradeAll: web + "/grade/all",
     getForumList: web + "/forum/list",
+    getAnnouncementList: web + "/announcement/list",
     getTagHot: web + "/tag/hot",
     getRewardList: web + "/reward/list",
     // ------------------------- 话题接口

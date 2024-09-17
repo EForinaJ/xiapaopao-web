@@ -2,21 +2,52 @@
     <div :class="design.theme ? 'page' : 'page dark'">
         <div class="container" :style="{ width: design.width + 'px' }">
             <div class="left">
-                <Menu />
+                <Menu 
+                    @changeForum="changeForum"
+                    @changeMode="changeMode"
+                />
 
                 <About />
             </div>
             <div class="right">
                 <div class="content">
-                    <Create />
-                    <div class="center">
-                        <div class="list">
-                            <Item />
+                    <div class="alert">
+                        <a-alert
+                        message="本站只作功能演示之用。严禁发布低俗、违法、涉及政治的内容。"
+                        banner
+                        closable
+                        />
+                    </div>
+                    <LoginPanel  v-if="token == null"/>
+                    <Create 
+                    v-if="token != null"
+                        @create="create"
+                    />
+                    <div v-if="!loading" class="center">
+                        <div v-if="list.length > 0" class="list">
+                            <Item 
+                                v-for="(item,index) in list"
+                                :key="index"
+                                :info="item"
+                            />
+                            <div v-if="isShow" class="nomore">
+                                加载完了！已经没有了
+                            </div>
                         </div>
+                        <div v-if="list.length == 0" class="empty">
+                            <a-empty >
+                                <span slot="description"> 还没帖子 </span>
+                            </a-empty>
+                        </div>
+                    </div>
+                    <div v-if="loading" class="center">
+                        <Skeleton :loading="loading"/>
                     </div>
                 </div>
                 <div class="sidebar">
-                    <User/>
+                    <Welcome v-if="token == null"/>
+
+                    <User v-if="token != null"/>
 
                     <HotUser/>
 
@@ -29,14 +60,18 @@
 </template>
 
 <script>
+import Welcome from "@/components/home/welcome"
 import About from "@/components/home/about"
 import Menu from "@/components/home/menu"
 import Create from "@/components/home/create"
+import LoginPanel from "@/components/home/login"
 import Item from "@/components/home/item"
 import User from "@/components/home/user"
 import Comment from "@/components/widget/comment"
 import HotUser from "@/components/widget/hotUser"
 import Affix from "@/components/widget/affix"
+import Skeleton from "@/components/widget/skeleton"
+
 
 import FIcon from '@/components/icon/FIcon'
 import { mapState } from "vuex"
@@ -44,6 +79,9 @@ import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import api from "@/api/index"
 export default {
     components:{
+        Welcome,
+        LoginPanel,
+        Skeleton,
         About,
         FIcon,
         Menu,
@@ -55,7 +93,7 @@ export default {
         Affix,
     },
     computed:{
-        ...mapState(["design"]),
+        ...mapState(["design","base"]),
         ...mapState("user",["token","accountInfo"]),
         ...mapState("forum",["forumInfo"]),
     },
@@ -68,108 +106,82 @@ export default {
             ]
         }
     },
-    async asyncData({$axios,redirect,store}){
-    
-
-        // const queryParam = {
-        //     page: 1,
-        //     limit: 8,
-        //     categoryId:0,
-        //     mode:0,
-        // }
-        // const res = await $axios.get(api.getArticleList,{params:queryParam})
-        // if (res.code != 1) {
-        //     redirect("/404")
-        // }
-        // res.data.list = res.data.list != null ? res.data.list : []
-        return {
-            base:store.state.base,
-            // loading: false,
-            // query:queryParam,
-            // total: res.data.total ?? 0,
-            // list: [...res.data.list],
-            // isShow: res.data.list.length > 0 ? false : true,
-        }
-    },
     data(){
         return{
             locale: zhCN,
-
-            categoryList: [],
-            categoryKey: 0,
-            forumList:[],
-            forumIsSearch:false,
-            forumSearchText: "",
-            contentCount:0,
-            selectForumObj: null,
-            openForum:false,
-            openImages:false,
-            openResource: false,
-            linkSearchText: "",
-            module: "article",
-            linkList:[],
-            selectLinkObj: null,
-            openLink:false,
-            form:{
-                title:undefined,
-                description:undefined,
-                images:[],
-                categoryId:undefined,
-                forumId:undefined,
-                tags:[],
-                content:"",
-                cover: "",
-                module: "",
-                relatedId: 0,
-                setResource: false,
-                resource:{
-                    title:undefined,
-                    example:undefined,
-                    mode:undefined,
-                    integral:undefined,
-                    money:undefined,
-                    grade:undefined,
-                    attr:[],
-                    gainCode:undefined,
-                    untieCode:undefined,
-                    link:undefined,
-                },
-                rules:{
-                    title:[
-                        { required: true, message: '请选输入玩家名称', trigger: 'change' },
-                    ],
-                    description:[
-                        { required: true, message: '请选输入简单描述', trigger: 'change' },
-                    ],
-                    cateId:[
-                        { required: true, message: '请选择分类', trigger: 'change' },
-                    ],
-                },
+            loading: false,
+            query: {
+                page: 1,
+                limit: 8,
+                forumId:0,
+                mode:2,
             },
+            total: 0,
+            list: [],
+            isShow: false,
         }
     },
+    mounted(){
+        this.loading = true
+        this.getList()
+        window.addEventListener('scroll', this.scrollList)
+    },
+    beforeDestroy () {
+        // 离开页面取消监听
+        window.removeEventListener('scroll', this.scrollList, false)
+    },
     methods:{
+        async getList(){
+            const res = await this.$axios.get(api.getPostList,{params: this.query})
+            if (res.code != 1) {
+                this.$message.error(
+                    res.message,
+                    3
+                )
+                return
+            }
+            res.data.list = res.data.list ?? []
+            this.isShow = res.data.list.length > 0 ? false : true
+            this.list = [...this.list,...res.data.list]
+            this.total = res.data.total
+            this.loading = false
+        },
         changeMode(e){
             this.loading = true
             this.query.page = 1
             this.list = []
             this.total = 0
             this.isShow = false
-            this.query.mode = e
+            if (e == 0) {
+                this.query.mode = 2
+            }
+            if (e == 1) {
+                this.query.mode = 6
+            }
+            if (e == 2) {
+                this.query.mode = 1
+            }
+            this.query.forumId = 0
+            
             this.getList()
-            this.loading = false
+            
         },
-        changeCategory(e){
+        changeForum(e){
             this.loading = true
             this.query.page = 1
             this.list = []
             this.total = 0
             this.isShow = false
-            this.query.categoryId = e
+            this.query.forumId = e
             this.getList()
-            this.loading = false
+            
         },
         
+        create(e){
+            this.list = []
+            this.getList()
+        },
+
         goPath(path){
             this.$router.push(path)
         },
@@ -188,34 +200,7 @@ export default {
                 return
             }
         },
-        async getList(){
-            const res = await this.$axios.get(api.getArticleList,{params: this.query})
-            if (res.code != 1) {
-                this.$message.error(
-                    res.message,
-                    3
-                )
-                return
-            }
-            res.data.list = res.data.list ?? [] 
-            this.isShow = res.data.list.length > 0 ? false : true
-            this.list = [...this.list,...res.data.list]
-            this.total = res.data.total
-        },
-
-        // -------------------------
         
-
-        // =====================
-        message(){
-            this.$Message().then((res)=>{
-                if (res != false) {
-                    
-                }
-            }).catch((err)=>{
-               
-            })
-        },
     }
 }
 </script>
@@ -230,7 +215,6 @@ export default {
         margin-top: 20px;
         display: flex;
         .left{
-            max-height: calc(100vh - 40px);
             width: 180px;
             margin-right: 20px;
         }
@@ -242,6 +226,20 @@ export default {
                 margin-right: 20px;
                 .center{
                     margin-top: 20px;
+                    .empty{
+                        border-radius: 4px;
+                        background: white;
+                        min-height: 400px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .nomore{
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding-bottom: 20px;
+                    }
                 }
             }
             .sidebar{

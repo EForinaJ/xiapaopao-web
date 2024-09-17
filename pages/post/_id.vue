@@ -197,7 +197,7 @@
                         alt="asdasd">
                     </div> -->
 
-                    <div id="comment"  class="comment">
+                    <div id="comment"  ref="comment" class="comment">
                         <CommentList
                         @updataCount="updataCount"
                         :count="info.comments"
@@ -288,7 +288,17 @@ export default {
         }
     },
     mounted(){
-        console.log(this.info)
+        // console.log(this.$refs.comment)
+        // const rect = this.$refs.comment.getBoundingClientRect();
+        // const topPosition = rect.top + window.scrollY;
+        // console.log('元素距离顶部的高度:', topPosition);
+        // window.scrollTo(0, topPosition);
+        setTimeout(() => {
+            document.querySelector(this.$route.hash).scrollIntoView({
+                behavior: "smooth"
+            });
+        }, 1000);
+        
     },
     methods:{
         async follow(){
