@@ -11,7 +11,7 @@
                     {{index + 1}}
                 </div>
                 <div class="title">
-                    {{item.title}}
+                    {{item.title != '' ? item.title : item.content}}
                 </div>
             </li>
         </ul>

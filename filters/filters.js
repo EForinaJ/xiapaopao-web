@@ -83,10 +83,14 @@ export function resetNum(count){
 }
 
 // 缩略图
-export function resetImage(v,w = null,h = null){
-    if (w == null || h == null) { 
+export function resetImage(v,base = "",w = null,h = null){
+    if (v.includes(base)) {
+        if (w == null || h == null) { 
+            return v;
+        }
+        v = v+`@w${w}_h${h}`
+        return v;
+    }else{
         return v;
     }
-    v = v+`@w${w}_h${h}`
-    return v;
 }

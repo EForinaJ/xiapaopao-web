@@ -146,7 +146,7 @@ export default {
     '~/static/css/main.less',
     'swiper/css/swiper.css' // 加入swiper样式
   ],
-
+  
   loading:false,
   /*
   ** Plugins to load before mounting the App
@@ -175,6 +175,11 @@ export default {
     { src: '@/plugins/modals/report', ssr: false },
     { src: '@/plugins/modals/reservation', ssr: false },
     { src: '@/plugins/modals/imgPreview', ssr: false },
+    { src: '@/plugins/modals/editForum', ssr: false },
+    { src: '@/plugins/modals/createForum', ssr: false },
+    { src: '@/plugins/modals/forumManger', ssr: false },
+    { src: '@/plugins/modals/mangerCreate', ssr: false },
+    { src: '@/plugins/modals/createPost', ssr: false },
     { src: '@/plugins/axios'},
     { src: '@/plugins/echarts', ssr: false },
     { src: "@/plugins/swipe", ssr: false },
@@ -220,5 +225,8 @@ export default {
   */
   build: {
     vendor: ['axios'], // 为防止重复打包
+    styleResources: {
+      less: './static/css/variable.less'
+    }
   }
 }

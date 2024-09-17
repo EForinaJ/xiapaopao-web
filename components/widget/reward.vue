@@ -125,145 +125,150 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.reward{
-    display: flex;
-    justify-content: center;
-    flex-flow: column;
+.widget{
+    background: white;
+    border-radius: 4px;
     padding: 20px;
-    border-radius: 3px;
-    position: relative;
-    background: #fffcf7;
-    .count{
-        font-size: 12px;
-        margin: 17px 0 5px;
-        color: #515A6E;
-    }
-    .users{
-        min-height: 100px;
-        max-width: 50%;
+    .reward{
         display: flex;
-        margin: 0;
-        flex-wrap: wrap;
-        .item{
-            cursor: pointer;
-            user-select: none;
-            padding: 0;
-            border: 0;
-            margin: 2px;
-            position: unset;
-            img{
-                display: block;
-                width: 32px;
-                height: 32px;
-                object-fit: cover;
-                border-radius: 3px;
+        justify-content: center;
+        flex-flow: column;
+        padding: 20px;
+        border-radius: 3px;
+        position: relative;
+        background: #fffcf7;
+        .count{
+            font-size: 12px;
+            margin: 17px 0 5px;
+            color: #515A6E;
+        }
+        .users{
+            min-height: 100px;
+            max-width: 50%;
+            display: flex;
+            margin: 0;
+            flex-wrap: wrap;
+            .item{
+                cursor: pointer;
+                user-select: none;
+                padding: 0;
+                border: 0;
+                margin: 2px;
+                position: unset;
+                img{
+                    display: block;
+                    width: 32px;
+                    height: 32px;
+                    object-fit: cover;
+                    border-radius: 3px;
+                }
             }
         }
-    }
-    .ds-btn{
-        position: absolute;
-        right: 20px;
-        top: 8px;
-        #con{
-            width: 320px;
-            height: 85px;
-            position: relative;
-            border-radius: 4px;
-            margin: 50px auto;
-            #TA-con{
-                width: 122px;
-                height: 45px;
-                background-color: #f25d8e;
-                position: absolute;
-                top: 50%;
-                left: 14%;
-                transform: translateY(-50%);
+        .ds-btn{
+            position: absolute;
+            right: 20px;
+            top: 8px;
+            #con{
+                width: 320px;
+                height: 85px;
+                position: relative;
                 border-radius: 4px;
-                cursor: pointer;
-                z-index: 2;
-                #text-icon{
-                    width: 100px;
-                    height: 100%;
-                    margin: 0 auto;
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    .icon{
-                        font-size: 18px;
-                        color: #fff;
-                    }
-                    #TA{
-                        margin-left: 5px;
-                        float: right;
-                        line-height: 45px;
-                        font-size: 15px;
-                        color: #fff;
+                margin: 50px auto;
+                #TA-con{
+                    width: 122px;
+                    height: 45px;
+                    background-color: #f25d8e;
+                    position: absolute;
+                    top: 50%;
+                    left: 14%;
+                    transform: translateY(-50%);
+                    border-radius: 4px;
+                    cursor: pointer;
+                    z-index: 2;
+                    #text-icon{
+                        width: 100px;
+                        height: 100%;
+                        margin: 0 auto;
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        .icon{
+                            font-size: 18px;
+                            color: #fff;
+                        }
+                        #TA{
+                            margin-left: 5px;
+                            float: right;
+                            line-height: 45px;
+                            font-size: 15px;
+                            color: #fff;
+                        }
                     }
                 }
-            }
-            #tube-con{
-                width: 157px;
-                height: 55px;
-                position: absolute;
-                right: -5px;
-                top: 15px;
-                svg{
-                    width: 100%;
-                    height: 100%;
-                }
+                #tube-con{
+                    width: 157px;
+                    height: 55px;
+                    position: absolute;
+                    right: -5px;
+                    top: 15px;
+                    svg{
+                        width: 100%;
+                        height: 100%;
+                    }
 
-                #mask{
-                    width: 0px;
-                    height: 100%;
-                    overflow: hidden;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    transition: all 0.5s;
-                    svg{
-                        width: 157px;
-                        height: 55px;
-                    }
-                }
-                #orange-mask{
-                    width: 18px;
-                    height: 100%;
-                    overflow: hidden;
-                    position: absolute;
-                    left: -15px;
-                    top: 0px;
-                    svg{
+                    #mask{
+                        width: 0px;
+                        height: 100%;
+                        overflow: hidden;
                         position: absolute;
                         top: 0;
-                        left: 15px;
-                        width: 157px;
-                        height: 55px;
+                        left: 0;
+                        transition: all 0.5s;
+                        svg{
+                            width: 157px;
+                            height: 55px;
+                        }
+                    }
+                    #orange-mask{
+                        width: 18px;
+                        height: 100%;
+                        overflow: hidden;
+                        position: absolute;
+                        left: -15px;
+                        top: 0px;
+                        svg{
+                            position: absolute;
+                            top: 0;
+                            left: 15px;
+                            width: 157px;
+                            height: 55px;
+                        }
+                    }
+                    #people {
+                        position: absolute;
+                        right: 10px;
+                        top: 18px;
+                        font-size: 12px;
+                        font-family: "雅黑";
+                        color: #aaa;
                     }
                 }
-                #people {
-                    position: absolute;
-                    right: 10px;
-                    top: 18px;
-                    font-size: 12px;
-                    font-family: "雅黑";
-                    color: #aaa;
+                #TA-con:hover{
+                    background-color: #ff6b9a;
+                }
+                #TA-con:hover+#tube-con>#mask {
+                    width: 157px;
+                }
+                #TA-con:hover+#tube-con>#orange-mask {
+                    animation: move1 0.5s linear 0.2s infinite;
+                }
+                #TA-con:hover+#tube-con>#orange-mask svg {
+                    animation: movetwo 0.5s linear 0.2s infinite;
                 }
             }
-            #TA-con:hover{
-                background-color: #ff6b9a;
-            }
-            #TA-con:hover+#tube-con>#mask {
-                width: 157px;
-            }
-            #TA-con:hover+#tube-con>#orange-mask {
-                animation: move1 0.5s linear 0.2s infinite;
-            }
-            #TA-con:hover+#tube-con>#orange-mask svg {
-                animation: movetwo 0.5s linear 0.2s infinite;
-            }
         }
+
+
     }
-
-
 }
 </style>

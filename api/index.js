@@ -16,13 +16,22 @@ const api = {
     getGradeNext: web + "/grade/next",
 
     // ------------------------- 获取分类版块
-    getCategoryInfo: web + "/category/info",
     getCategoryAll: web + "/category/all",
     getGradeAll: web + "/grade/all",
-    getForumList: web + "/forum/list",
     getAnnouncementList: web + "/announcement/list",
     getTagHot: web + "/tag/hot",
     getRewardList: web + "/reward/list",
+
+    // ------------------------- 话题接口
+    getForumList: web + "/forum/list",
+    getForumInfo: web + "/forum/info",
+    getForumEditInfo: web + "/forum/edit/info",
+    getForumManger: web + "/forum/manger",
+    postForumJoin: web + "/forum/join",
+    postForumEdit: web + "/forum/edit",
+    postForumCreate: web + "/forum/create",
+    postForumApplyManger: web + "/forum/apply/manger",
+    getForumJoin: web + "/forum/join",
     // ------------------------- 话题接口
     getPostList: web + "/post/list",
     getPostTop: web + "/topic/top",
