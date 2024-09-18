@@ -13,10 +13,11 @@
 </template>
 
 <script>
-import { Icon } from 'ant-design-vue';
+// <FIcon :size="14" type="icon-tupian_huaban"/>
 
+import { Icon } from 'ant-design-vue';
 const FIcon = Icon.createFromIconfontCN({
-  scriptUrl: '//at.alicdn.com/t/c/font_4174995_5ilav9utol9.js',
+  scriptUrl: '//at.alicdn.com/t/c/font_4174995_wlv1lu54z0m.js',
 });
 export default {
   props:{ 

@@ -31,7 +31,9 @@ const api = {
     postForumEdit: web + "/forum/edit",
     postForumCreate: web + "/forum/create",
     postForumApplyManger: web + "/forum/apply/manger",
-    getForumJoin: web + "/forum/join",
+    postForumRemovePost: web + "/forum/remove/post",
+    postForumTopPost: web + "/forum/top/post",
+    postForumRecommendPost: web + "/forum/recommend/post",
     // ------------------------- 话题接口
     getPostList: web + "/post/list",
     getPostTop: web + "/topic/top",

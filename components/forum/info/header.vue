@@ -70,7 +70,7 @@
                 <a-dropdown>
                     <a-icon type="more" />
                     <a-menu slot="overlay">
-                        <a-menu-item v-if="info.manger != null" @click="edit" key="0">
+                        <a-menu-item v-if="info.manger.id == accountInfo.id " @click="edit" key="0">
                             编辑
                         </a-menu-item>
                         <a-menu-item @click="create" key="1">
@@ -147,7 +147,7 @@ export default {
             }
             this.$CreatePost(this.info).then((res)=>{
                 if (res != false) {
-                //    this.$emit("getData")
+                   this.$emit("setData",res)
                 }
             }).catch((err)=>{
                
