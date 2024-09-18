@@ -41,7 +41,7 @@
                 <div v-if="info.manger != null" class="avatar">
                     <a-avatar :size="20" :src="info.manger.avatar" />
                 </div>
-                <div class="dot"></div>
+                <div v-if="list.length > 0" class="dot"></div>
                 <div v-for="(item,index) in list" :key="index" class="avatar manger">
                     <a-avatar :size="20" :src="item.avatar" />
                 </div>
@@ -64,11 +64,11 @@
                 <span class="text">{{info.isJoin ? '退出' : '加入'}}</span>
             </div>
             <div @click="share" class="item">
-                <FIcon :size="16" type="icon-fenxiang"/>
+                <FIcon :size="16" type="icon-icon-fenxiang-lgiht-copy"/>
             </div>
             <div class="item">
                 <a-dropdown>
-                    <a-icon type="more" />
+                    <FIcon :size="16" type="icon-icmore-copy"/>
                     <a-menu slot="overlay">
                         <a-menu-item v-if="info.manger.id == accountInfo.id " @click="edit" key="0">
                             编辑
@@ -99,11 +99,20 @@ export default {
         list:{
             type: Array,
             default: []
-        }
+        },
+        mangerList:{
+            type: Array,
+            default: []
+        },
     },
     computed:{
         ...mapState(["base"]),
         ...mapState("user",["token","accountInfo"]),
+    },
+    data(){
+        return{
+            
+        }
     },
     mounted(){
         if (this.list.length > 3) {
@@ -216,25 +225,25 @@ export default {
     position: relative;
     background-color: #eff1f3;
     overflow: hidden;
-    border-radius: 4px;
+    border-radius: 8px;
     .cover{
         position: absolute;
         left: -50px;
         top: -50px;
         width: calc(100% + 100px);
         height: calc(100% + 100px);
-        border-radius: 4px;
+        border-radius: 8px;
         filter: blur(30px);
         img{
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 8px;
         }
     }
     .mask{
         
-        border-radius: 4px;
+        border-radius: 8px;
         position: absolute;
         left: 0;
         top: 0;
@@ -346,7 +355,7 @@ export default {
                 padding: 5px 18px;
             }
             .avatar{
-                
+                margin-right: 5px;
                 border-radius: 50%;
                 border: 1px solid white;
             }

@@ -72,30 +72,6 @@
                         </a-row>
                     </a-form-model-item>
 
-                    <a-form-model-item ref="isAuditing" prop="isAuditing">
-                        <a-row class="account-router" :gutter="[{md:12}]">
-                            <a-col :span="24" :md="6">
-                                <div class="from-title">
-                                    帖子权限
-                                </div>
-                            </a-col>
-                            <a-col :span="24" :md="18">
-                                <a-select 
-                                    size="large"
-                                    v-model="form.isAuditing" 
-                                    style="width: 100%">
-                                    <a-select-option  
-                                    :value="1">
-                                        审核发布
-                                    </a-select-option>
-                                    <a-select-option  
-                                     :value="2">
-                                        直接发布
-                                    </a-select-option>
-                                </a-select>
-                            </a-col>
-                        </a-row>
-                    </a-form-model-item>
 
                     <a-form-model-item ref="postAuth" prop="postAuth">
                         <a-row class="account-router" :gutter="[{md:12}]">

@@ -10,7 +10,7 @@ import api from "@/api/index"
 
 export const state = () => ({
     design:{
-        width:1200,
+        width:1250,
         layout:"default", //home default
         theme: true
     },

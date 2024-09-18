@@ -178,7 +178,6 @@ export default {
     { src: '@/plugins/modals/editForum', ssr: false },
     { src: '@/plugins/modals/createForum', ssr: false },
     { src: '@/plugins/modals/forumManger', ssr: false },
-    { src: '@/plugins/modals/mangerCreate', ssr: false },
     { src: '@/plugins/modals/createPost', ssr: false },
     { src: '@/plugins/axios'},
     { src: '@/plugins/echarts', ssr: false },

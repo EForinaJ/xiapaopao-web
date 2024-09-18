@@ -925,7 +925,7 @@ export default {
             .from{
                
                 position: relative;
-                background-color: white;
+                // background-color: white;
                 padding: 20px;
                 .create-info{
                     border: 2px solid #f5f5f5;

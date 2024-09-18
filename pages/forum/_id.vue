@@ -3,12 +3,13 @@
         <div class="container" :style="{ width: design.width + 'px' }">
             <div class="left">
                 <div class="content">
-                    <Header :info="info"
+                    <Header 
                         @joinCount="joinCount"
                         @getData="getData"
-                        @showCreate="showCreate"
                         @setData="setData"
+                        :info="info"
                         :list="mangerList"
+                        :mangerList="mangerList"
                     />
                     <div class="center">
                         <Menu @changeSelectKey="changeSelectKey"/>
@@ -53,8 +54,19 @@
                 </div>
             </div>
             <div class="right">
+                <About 
+                    :info="info"
+                    @joinCount="joinCount"
+                    @getData="getData"
+                    @setData="setData"
+                    :list="mangerList"
+                />
+                
+                <Manger 
+                    :info="info"
+                    :mangerList="mangerList"
+                />
                 <HotPost />
-                <!-- <About /> -->
             </div>
         </div>
     </div>
@@ -65,22 +77,22 @@ import api from "@/api/index"
 import { mapState } from "vuex"
 import zhCN from 'ant-design-vue/lib/locale-provider/zh_CN'
 import HotPost from "@/components/widget/hotPost"
-import About from "@/components/widget/about"
-import ImageAdaptation from "@/components/adaptation/image"
 
+import About from "@/components/forum/info/about"
 import Skeleton from "@/components/widget/skeleton"
-
-
 import Header from "@/components/forum/info/header"
 import Menu from "@/components/forum/info/menu"
 import Item from "@/components/forum/info/item"
+import Manger from "@/components/forum/info/manger"
 export default {
     components:{
         Header,
         Menu,
         Item,
         Skeleton,
-        HotPost,About,ImageAdaptation
+        About,
+        Manger,
+        HotPost
     },
     head () {
         return {
@@ -192,6 +204,8 @@ export default {
                 this.isManger = true
                 return
             }
+
+            
         },
         async getData(){
             const res = await this.$axios.get(api.getForumInfo,{params:{id:this.id}})
@@ -206,9 +220,6 @@ export default {
         },
         joinCount(e){
             this.info.members = e
-        },
-        showCreate(){
-            this.showCreatePanle = !this.showCreatePanle
         },
         
 
@@ -294,7 +305,7 @@ export default {
     .container{
         margin-top: 20px;
         display: flex;
-        padding: 0 50px;
+        padding: 0 80px;
         .left{
             flex: 1;
             margin-right: 20px;
@@ -304,7 +315,7 @@ export default {
                     margin-bottom: 20px;
                     background-color: white;
                     padding: 20px;
-                    border-radius: 4px;
+                    border-radius: 8px;
                     min-height: 500px;
 
                     .empty{
