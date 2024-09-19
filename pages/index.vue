@@ -21,7 +21,7 @@
                     <LoginPanel  v-if="token == null"/>
                     <Create 
                     v-if="token != null"
-                        @create="create"
+                        @createPost="create"
                     />
                     <div v-if="!loading" class="center">
                         <div v-if="list.length > 0" class="list">
@@ -178,8 +178,8 @@ export default {
         },
         
         create(e){
-            this.list = []
-            this.getList()
+            this.list = [e,...this.list]
+           
         },
 
         goPath(path){

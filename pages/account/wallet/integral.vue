@@ -98,6 +98,8 @@ export default {
                     return "举报奖励"
                 case 9:
                     return "精华帖子奖励"
+                case 10:
+                    return "积分兑换"
             }
         },
         resetTypeIcon (e) {

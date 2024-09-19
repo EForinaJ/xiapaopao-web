@@ -4,7 +4,7 @@
             <div class="create-title">
                 <a-input
                     size="large"
-                    placeholder="请写入标题（选填）" 
+                    placeholder="内容若设置阅读权限，请输入标题（选填）" 
                     v-model="form.title"
                     :maxLength="256"
                 />
@@ -24,7 +24,7 @@
                         <div class="icon">
                             <FIcon class="icon" :size="16" type="icon-huati"/>
                         </div>
-                        <div class="title">
+                        <div class="form-title">
                             {{selectForumObj != null ? selectForumObj.title : '请选择圈子'}}
                         </div>
                     </div>
@@ -34,7 +34,9 @@
                                 <div class="search">
                                     <a-input-search 
                                     placeholder="请输入版块标题" style="width: 100%" 
-                                    @change="onSearch"
+                               
+                                    @search="onSearch"
+                                    @change="onchangeForumSearch"
                                     v-model="forumSearchText"
                                     />
                                 </div>
@@ -123,13 +125,13 @@
                 </div>
             </div>
         </div>
-        <!-- 
+        
         <div v-if="selectLinkObj != null" class="create-link">
             <div class="cover">
                 <img :src="selectLinkObj.cover" :alt="selectLinkObj.title">
             </div>
             <div class="title-desc">
-                <div class="title">
+                <div class="link-title">
                     {{selectLinkObj.title}}
                 </div>
                 <div class="desc">
@@ -139,146 +141,11 @@
             <div @click="removeLink" class="dot">
                 <a-icon type="close" />
             </div>
-        </div> -->
-
-        <div v-if="openResource" class="create-resouce">
-            <a-row :gutter="[{md:20}]">
-                <a-col :span="24" :md="12">
-                    <a-input
-                        size="large"
-                        placeholder="请写入资源标题" 
-                        v-model="form.resource.title"
-                    />
-                </a-col>
-                <a-col :span="24" :md="12">
-                    <a-input
-                        size="large"
-                        placeholder="请写入资源演示地址" 
-                        v-model="form.resource.example"
-                    />
-                </a-col>
-            </a-row>
-
-            <div class="mode rescource-box">
-                <div class="text">资源权限</div>
-                <a-radio-group size="large"
-                    v-model="form.resource.mode" 
-                    button-style="solid">
-                    <a-radio-button :value="1">
-                        登录后可看
-                    </a-radio-button>
-                    <a-radio-button :value="2">
-                        评论后可看
-                    </a-radio-button>
-                    <!-- <a-radio-button :value="3">
-                        按等级查看
-                    </a-radio-button> -->
-                    <a-radio-button :value="4">
-                        积分兑换查看
-                    </a-radio-button>
-                    <a-radio-button :value="5">
-                        付费购买查看
-                    </a-radio-button>
-                </a-radio-group>
-            </div>
-
-            <!-- 积分 -->
-            <div v-if="form.resource.mode == 4" class="integral">
-                <a-input-number
-                    size="large" 
-                    placeholder="请输入积分"
-                    :style="{ width: '100%' }"
-                    :min="0"
-                />
-            </div>
-            <!-- 费用 -->
-            <div v-if="form.resource.mode == 5" class="money">
-                <a-input-number
-                    size="large" 
-                    placeholder="请输入费用"
-                    :style="{ width: '100%' }"
-                    :min="0"
-                />
-            </div>
-            <!-- 等级 -->
-            <div v-if="form.resource.mode == 3" class="grade">
-                <div class="grade-list">
-                    <div @click="selectGrade(item.id)" v-for="(item,index) in gradeList" :key="index" class="grade-item">
-                        <input class="x-input" v-model="form.resource.grade" :value="item.id" type="radio" >
-                        <div class="lavel">
-                            <img class="lavel" :src="item.icon" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="rescource-box">
-                <div class="text">资源属性</div>
-                <a-button v-if="form.resource.attr.length == 0" @click="addAttr" block type="dashed">
-                    添加属性
-                </a-button>
-                <ul v-if="form.resource.attr.length > 0" class="attr-list">
-                    <li v-for="(item,index) in form.resource.attr" :key="index" class="item">
-                        <div class="input">
-                            <a-row :gutter="[{md:20}]">
-                                <a-col :span="24" :md="12">
-                                    <a-input
-                                        size="large"
-                                        placeholder="请写入属性标识" 
-                                        v-model="item.key"
-                                    />
-                                </a-col>
-                                <a-col :span="24" :md="12">
-                                    <a-input
-                                        size="large"
-                                        placeholder="请写入属性值" 
-                                        v-model="item.value"
-                                    />
-                                </a-col>
-                            </a-row>
-                        </div>
-                        <div class="action">
-                            <a-space>
-                                <a-button @click="addAttr" type="dashed">
-                                    添加
-                                </a-button>
-                                <a-button @click="deleteAttr(index)" type="danger">
-                                    删除
-                                </a-button>
-                            </a-space>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-
-            <a-row :gutter="[{md:20}]">
-                <a-col :span="24" :md="8">
-                    <a-input
-                        size="large"
-                        placeholder="下载地址" 
-                        v-model="form.resource.link"
-                    />
-                </a-col>
-                <a-col :span="24" :md="8">
-                    <a-input
-                        size="large"
-                        placeholder="解压码" 
-                        v-model="form.resource.untieCode"
-                    />
-                </a-col>
-                <a-col :span="24" :md="8">
-                    <a-input
-                        size="large"
-                        placeholder="请请输入提取码" 
-                        v-model="form.resource.gainCode"
-                    />
-                </a-col>
-            </a-row>
         </div>
 
         <div class="create-option">
             <div class="options">
-                <div @click="selectImg" class="options-item">
+                <div @click="selectImg" :class="selectLinkObj != null ? 'options-item not-allowed' : 'options-item'">
                     <div class="icon">
                         <FIcon class="icon" :size="18" type="icon-tupian1"/>
                     </div>
@@ -286,31 +153,71 @@
                         图片
                     </div>
                 </div>
-                <!-- <div @click="openLinkPanel" class="options-item">
+                <div @click="openLinkPanel" :class="form.images.length > 0 ? 'options-item not-allowed' : 'options-item'">
                     <div class="icon">
                         <FIcon class="icon" :size="18" type="icon-lianjie"/>
                     </div>
                     <div class="text">
                         链接
                     </div>
-                </div> -->
-                <div @click="changeResource" class="options-item">
-                    <div class="icon">
-                        <FIcon class="icon" :size="18" type="icon-zip"/>
-                    </div>
-                    <div class="text">
-                        资源
-                    </div>
                 </div>
             </div>
-            <div @click="submit" class="create-btn">
-                发布帖子
-            </div>
+            <div class="create-btn-auth">
+                <div v-if="authSelectKey == 1" @click="openAuthPanel" class="create-auth">
+                    <div class="icon">
+                        <FIcon :size="20" type="icon-quanqiu2x"/>
+                    </div>
+                    <div class="text">
+                        无限制
+                    </div>
+                </div>
+                <div v-if="authSelectKey == 2" @click="openAuthPanel" class="create-auth">
+                    <div class="icon">
+                        <FIcon :size="20" type="icon-user"/>
+                    </div>
+                    <div class="text">
+                        登录
+                    </div>
+                </div>
+                <div v-if="authSelectKey == 3" @click="openAuthPanel" class="create-auth">
+                    <div class="icon">
+                        <FIcon :size="20" type="icon-pinglun"/>
+                    </div>
+                    <div class="text">
+                        评论
+                    </div>
+                </div>
+                <div v-if="authSelectKey == 4" @click="openAuthPanel"  class="create-auth">
+                    <div class="icon">
+                        <FIcon :size="20" type="icon-fufeizhifu"/>
+                    </div>
+                    <div class="text">
+                        付费
+                    </div>
+                </div>
+                <div v-if="authSelectKey == 5" @click="openAuthPanel" class="create-auth">
+                    <div class="icon">
+                        <FIcon :size="20" type="icon-jifen"/>
+                    </div>
+                    <div class="text">
+                        积分
+                    </div>
+                </div>
 
-            <!-- <div v-if="openLink" class="link-panel">
+                <div @click="submit" 
+                    class="create-btn">
+                    发布帖子
+                </div>
+            </div>
+            
+
+            <div v-if="openLink" class="link-panel">
                 <div class="popover-content">
                     <div class="text-input">
-                        <a-input-search style="width: 100%" v-model="linkSearchText" placeholder="输入标题"  size="large" @search="onLinkSearch">
+                        <a-input-search style="width: 100%" v-model="linkSearchText" placeholder="输入标题"  size="large" 
+                        @search="onLinkSearch"
+                        @change="changeLinkSearch"
+                        >
                             <a-button slot="enterButton">
                                 搜索
                             </a-button>
@@ -340,7 +247,115 @@
                     </div>
                 </div>
                 <div class="popper-arrow"></div>
-            </div> -->
+            </div>
+            <div v-if="openAuth" class="auth-panel">
+                <div class="popover-content">
+                    <div class="auth-options">
+                        <div
+                            @click="changeAuth(1)" 
+                            :class="authSelectKey == 1 ? 'auth-item active' : 'auth-item'"
+                        >
+                            <div class="icon">
+                                <FIcon :size="14" type="icon-quanqiu2x"/>
+                            </div>
+                            <div class="text">
+                                无限制
+                            </div>
+                        </div>
+                        <div 
+                            @click="changeAuth(2)" 
+                            :class="authSelectKey == 2 ? 'auth-item active' : 'auth-item'"
+                        >
+                            <div class="icon">
+                                <FIcon :size="14" type="icon-user"/>
+                            </div>
+                            <div class="text">
+                                登录
+                            </div>
+                        </div>
+                        <div 
+                            @click="changeAuth(3)" 
+                            :class="authSelectKey == 3 ? 'auth-item active' : 'auth-item'"
+                        >
+                            <div class="icon">
+                                <FIcon :size="14" type="icon-pinglun"/>
+                            </div>
+                            <div class="text">
+                                评论
+                            </div>
+                        </div>
+                        <div 
+                            @click="changeAuth(4)" 
+                            :class="authSelectKey == 4 ? 'auth-item active' : 'auth-item'"
+                        >
+                            <div class="icon">
+                                <FIcon :size="14" type="icon-fufeizhifu"/>
+                            </div>
+                            <div class="text">
+                                付费
+                            </div>
+                        </div>
+                        <div 
+                            @click="changeAuth(5)" 
+                            :class="authSelectKey == 5 ? 'auth-item active' : 'auth-item'"
+                        >
+                            <div class="icon">
+                                <FIcon :size="14" type="icon-jifen"/>
+                            </div>
+                            <div class="text">
+                                积分
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div v-if="authSelectKey == 1" class="auth-desc um">
+                        <div class="text">
+                            无限制，任意查看话题内容
+                        </div>
+                    </div>
+                    <div v-if="authSelectKey == 2" class="auth-desc um">
+                        <div class="text">
+                            用户登录之后方可查看话题内容
+                        </div>
+                    </div>
+                    <div v-if="authSelectKey == 3" class="auth-desc um">
+                        <div class="text">
+                            用户评论此话题之后方可查看话题内容
+                        </div>
+                    </div>
+                    <div v-if="authSelectKey == 4" class="auth-desc um">
+                        <div class="price">
+                            <a-input-number
+                                v-model="form.price"
+                                size="large" 
+                                placeholder="请输入费用"
+                                :style="{ width: '100%' }"
+                                :min="0"
+                                :precision="0"
+                            />
+                        </div>
+                        <div class="text">
+                            用户支付费用之后方可查看话题内容
+                        </div>
+                    </div>
+                    <div v-if="authSelectKey == 5" class="auth-desc um">
+                        <div class="price">
+                            <a-input-number
+                                size="large" 
+                                v-model="form.integral"
+                                placeholder="请输入积分"
+                                :style="{ width: '100%' }"
+                                :min="0"
+                                :precision="0"
+                            />
+                        </div>
+                        <div class="text">
+                            用户支付积分后方可查看话题内容
+                        </div>
+                    </div>
+                </div>
+                <div class="popper-arrow"></div>
+            </div>
         </div>
     </div>
 </template>
@@ -372,34 +387,25 @@ export default {
             selectForumObj: null,
             openForum:false,
             openImages:false,
-            openResource: false,
             linkSearchText: "",
             module: "article",
             linkList:[],
             selectLinkObj: null,
             openLink:false,
+            openAuth:false,
+            authSelectKey: 1,
             form:{
                 title:undefined,
                 images:[],
                 forumId:undefined,
                 tags:[],
                 content:"",
-                cover: "",
                 module: "",
                 relatedId: 0,
-                setResource: 1,
-                resource:{
-                    title:undefined,
-                    example:undefined,
-                    mode:undefined,
-                    integral:undefined,
-                    money:undefined,
-                    grade:undefined,
-                    attr:[],
-                    gainCode:undefined,
-                    untieCode:undefined,
-                    link:undefined,
-                },
+                price:0,
+                integral:0,
+                authority:1,
+                type: 1,
                 rules:{
                     title:[
                         { required: true, message: '请选输入玩家名称', trigger: 'change' },
@@ -412,6 +418,7 @@ export default {
                     ],
                 },
             },
+            post:null,
         }
     },
     mounted(){
@@ -425,8 +432,15 @@ export default {
                 this.$Auth("login","登录","快速登录")
                 return
             }
+            if (this.form.authority != 1 && (this.form.title == "" || this.form.title == null|| this.form.title == undefined)) {
+                this.$message.error(
+                    "内容若设置阅读权限，请输入标题",
+                    3
+                )
+                return
+            }
             // 判断标题是否为空
-            if (this.form.content === "" || this.form.content == null || this.form.content == undefined) {
+            if (this.form.content == "" || this.form.content == null || this.form.content == undefined) {
                 this.$message.error(
                     "请输入内容",
                     3
@@ -441,6 +455,25 @@ export default {
                 return
             }
             
+            if (this.form.authority == 4) {
+                if (this.form.price == 0) {
+                    this.$message.error(
+                        "请设置费用",
+                        3
+                    )
+                    return
+                }
+                
+            }
+            if (this.form.authority == 5) {
+                if (this.form.integral == 0) {
+                    this.$message.error(
+                        "请设置积分",
+                        3
+                    )
+                    return
+                }
+            }
             
             // if (this.form.tags.length > 5) {
             //     this.$message.error(
@@ -450,42 +483,12 @@ export default {
             //     return
             // }
             
-            if (this.form.setResource && this.form.resource.mode == 4) {
-                if (this.form.resource.integral == 0 || this.form.resource.integral == null || this.form.resource.integral == undefined) {
-                    this.$message.error(
-                        "请设置兑换积分",
-                        3
-                    )
-                    return
-                }
-            }
+            
 
-            if (this.form.setResource && this.form.resource.mode == 5) {
-                if (this.form.resource.money == 0 || this.form.resource.money == null || this.form.resource.money == undefined) {
-                    this.$message.error(
-                        "请设置费用",
-                        3
-                    )
-                    return
-                }
-                
-            }
 
-            if (this.form.setResource && this.form.resource.mode == 3) {
-                if (this.form.resource.grade == 0 || this.form.resource.grade  == null || this.form.resource.grade  == undefined) {
-                    this.$message.error(
-                        "请设置等级",
-                        3
-                    )
-                    return
-                }
-                
-            }
             this.form.content = this.form.content.replace(/\n/g,"<br/>");  
-      
-
             this.postCreate(this.form)
-
+            
         },
         async postCreate(formData){
             try {
@@ -498,24 +501,50 @@ export default {
                     return
                 }
                 this.$message.success(
-                    "发布帖子成功",
+                    "成功发布",
                     3
                 )
-                this.form.title = undefined
-                this.form.content = undefined
-                this.form.images = []
-                this.form.setResource = 1
-                this.form.resource.title = undefined
-                this.form.resource.example = undefined
-                this.form.resource.mode = undefined
-                this.form.resource.integral = undefined
-                this.form.resource.money = undefined
-                this.form.resource.grade = undefined
-                this.form.resource.attr = []
-                this.form.resource.gainCode = undefined
-                this.form.resource.untieCode = undefined
-                this.form.resource.link = undefined
-                this.$emit("create")
+                this.categoryList =  [],
+                this.categoryKey =  0,
+                this.forumList = [],
+                this.forumIsSearch = false,
+                this.forumSearchText = "",
+                this.contentCount = 0,
+                this.selectForumObj = null,
+                this.openForum = false,
+                this.openImages = false,
+                this.linkSearchText =  "",
+                this.module = "article",
+                this.linkList = [],
+                this.selectLinkObj = null,
+                this.openLink = false,
+                this.openAuth = false,
+                this.authSelectKey = 1,
+                this.form = {
+                    title:undefined,
+                    images:[],
+                    forumId:undefined,
+                    tags:[],
+                    content:"",
+                    module: "",
+                    relatedId: 0,
+                    price:0,
+                    integral:0,
+                    authority:1,
+                    type: 1,
+                    rules:{
+                        title:[
+                            { required: true, message: '请选输入玩家名称', trigger: 'change' },
+                        ],
+                        description:[
+                            { required: true, message: '请选输入简单描述', trigger: 'change' },
+                        ],
+                        cateId:[
+                            { required: true, message: '请选择分类', trigger: 'change' },
+                        ],
+                    },
+                },
+                this.$emit("createPost",res.data.info)
             } catch (error) {
                 (error)
                 setTimeout(() => {
@@ -527,6 +556,7 @@ export default {
             }
         },
         async getCategroy(){
+            this.loading = true
             const res = await this.$axios.get(api.getCategoryAll,
                 {
                     params:{module:"forum"}
@@ -540,6 +570,7 @@ export default {
                 return
             }
             this.categoryList = res.data.list ?? []
+            this.loading = false
         },
         async getForum(params){
             const res = await this.$axios.get(api.getForumList,
@@ -576,12 +607,16 @@ export default {
             this.categoryKey = e
             if (e == 0 && id == 0) {
                 let params = {
+                    page:1,
+                    limit: 50,
                     isTop: 2,
                 }
                 this.getForum(params)
             }
             if (e == 1 && id == 0) {
                 let params = {
+                    page:1,
+                    limit: 50,
                     isJoin: true,
                 }
                 this.getForum(params)
@@ -589,6 +624,8 @@ export default {
 
             if (id != 0) {
                 let params = {
+                    page:1,
+                    limit: 50,
                     categoryId: id,
                 }
                 this.getForum(params)
@@ -601,9 +638,13 @@ export default {
         },
         openForumPanel(){
             this.openForum = !this.openForum
+            this.openLink = false
+            this.openAuth = false
             if (this.openForum) {
                 let params = {
                     isTop: 2,
+                    page:1,
+                    limit: 50,
                 }
                 this.getForum(params)
             }
@@ -614,19 +655,28 @@ export default {
             this.openForum = !this.openForum
         },
         onSearch(){
-            if (this.forumSearchText == "") {
-                this.categoryKey = 0
-                let params = {
-                    isTop: 2,
-                }
-                this.getForum(params)
-                this.forumIsSearch = false
-            }else{
+            if (this.forumSearchText != "") {
+                this.forumList = []
                 this.forumIsSearch = true
                 let params = {
                     title: this.forumSearchText,
+                    page:1,
+                    limit: 50,
                 }
                 this.getForum(params)
+            }
+        },
+        onchangeForumSearch(){
+            if (this.forumSearchText == "") {
+                this.categoryKey = 0
+                this.forumList = []
+                let params = {
+                    isTop: 2,
+                    page:1,
+                    limit: 50,
+                }
+                this.getForum(params)
+                this.forumIsSearch = false
             }
         },
         
@@ -637,10 +687,18 @@ export default {
             this.form.images.splice(i,1)
         },
         selectImg(){
+            if (this.selectLinkObj != null) {
+                return
+            }
+            this.close()
             this.$Upload().then((res)=>{
                 if (res != false) {
                     if (this.form.images.length <= 8) {
                         this.form.images.push(res)
+                        this.form.relatedId = 0
+                        this.form.module = ""
+                        this.form.type = 1
+                        this.open()
                     }else{
                         this.$message.error(
                            "上传图片数量最多只能为9张",
@@ -648,10 +706,11 @@ export default {
                         )
                         return
                     }
+                }else{
+                    this.open()
                 }
             }).catch((err)=>{
-               this.form.images = []
-                // this.createForm.link = null
+                this.open()
             })
         },
 
@@ -666,10 +725,23 @@ export default {
                             limit: 10,
                         }
                         this.getArticle(params)
-                    }else{
-                        this.linkList = []
                     }
-                    
+                    break;
+                default:
+                    break;
+            }
+        },
+        changeLinkSearch(){
+            switch (this.module) {
+                case "article":
+                    if (this.linkSearchText == "") {
+                        let params = {
+                            title: "",
+                            page: 1,
+                            limit: 10,
+                        }
+                        this.getArticle(params)
+                    }
                     break;
                 default:
                     break;
@@ -679,6 +751,7 @@ export default {
             this.selectLinkObj = e
             this.form.relatedId = e.id
             this.form.module = this.module
+            this.form.images = []
             this.openLink = false
         },
         removeLink(){
@@ -688,7 +761,13 @@ export default {
             this.openLink = false
         },
         openLinkPanel(){
+            if (this.form.images.length > 0) {
+                return
+            }
             this.openLink = !this.openLink
+            this.form.type = 2
+            this.openAuth = false
+            this.openForum = false
             if (this.openLink) {
                 let params = {
                     isTop: 2,
@@ -697,34 +776,26 @@ export default {
                 }
                 this.getArticle(params)
             }
+            
+           
         },
 
-        changeResource(){
-            this.openResource =  !this.openResource
-            if (this.openResource) {
-                this.form.setResource = 2
-            }else{
-                this.form.setResource = 1
-                this.form.resource.title = undefined
-                this.form.resource.example = undefined
-                this.form.resource.mode = undefined
-                this.form.resource.integral = undefined
-                this.form.resource.money = undefined
-                this.form.resource.grade = undefined
-                this.form.resource.attr = []
-                this.form.resource.gainCode = undefined
-                this.form.resource.untieCode = undefined
-                this.form.resource.link = undefined
+        openAuthPanel(){
+            this.openAuth = !this.openAuth
+            this.openForum = false
+            this.openLink = false
+        },
+        changeAuth(e){
+            if (e != 1 && (this.form.title == "" || this.form.title == null|| this.form.title == undefined)) {
+                this.$message.error(
+                    "内容若设置阅读权限，请输入标题",
+                    3
+                )
+                return
             }
-        },
-        addAttr(){
-            this.form.resource.attr.push({
-                key: undefined,
-                value: undefined,
-            })
-        },
-        deleteAttr(index){
-            this.form.resource.attr.splice(index,1)
+            this.authSelectKey = e
+            this.form.authority = e
+            
         },
     }
 }
@@ -767,7 +838,7 @@ export default {
                         justify-content: center;
                         text-align: center;
                     }
-                    .title{
+                    .form-title{
                         height: 23px;
                         font-size: 12px;
                         color: #1e80ff;
@@ -1066,105 +1137,6 @@ export default {
         }
     }
 
-    .create-resouce{
-        margin-top: 20px;
-        /deep/ .ant-input{
-            resize : none;
-            border: 0;
-            outline: none;
-            -webkit-box-shadow: none !important;
-            box-shadow: none !important;
-            background-color: #fafafa;
-        }
-        /deep/ .ant-input-number{
-            resize : none;
-            border: 0;
-            outline: none;
-            -webkit-box-shadow: none !important;
-            box-shadow: none !important;
-            background-color: #fafafa;
-        }
-        .mode{
-            margin-top: 20px;
-        }
-        .rescource-box{
-            margin: 20px 0;
-            .text{
-                font-size: 12px;
-                font-weight: 900;
-                color: #999;
-                margin-bottom: 10px;
-            }
-            .attr-list{
-                .item{
-                    display: flex;
-                    align-items: center;
-                    margin-bottom: 10px;
-                    .input{
-                        flex: 1;
-                    }
-                    .action{
-                        margin-left: 20px;
-                    }
-                } 
-            }
-        }
-        .grade{
-            .grade-list{
-                display: flex;
-                align-items: center;
-                .grade-item{
-                    margin-right: 20px;
-                    display: flex;
-                    align-items: center;
-                    .x-input[type=radio]{
-                        border-radius: 50%;
-                        border: 1px solid #1890ff;
-                        border-radius: 3px;
-                        background: #1890ff;
-                        clear: none;
-                        cursor: pointer;
-                        display: inline-block;
-                        line-height: 0;
-                        height: 1em;
-                        outline: 0;
-                        padding: 0 !important;
-                        text-align: center;
-                        width: 1em;
-                        min-width: 1em;
-                        box-shadow: inset 0 2px 2px rgba(0,0,0,.1);
-                        transition: border-color .3s, background .3s, opacity .2s;
-                        vertical-align: -0.15em;
-                        position: relative;
-                    }
-                    .x-input[type=radio]::before{
-                        content: '';
-                        border-radius: 50%;
-                        width: 0.5em;
-                        height: 0.5em;
-                        margin: 0.18em;
-                        background-color:#1890ff;
-                        line-height: 1.14285714;
-                        float: left;
-                        opacity: 0;
-                        transition: opacity .2s;
-                    }
-                    .lavel{
-                        margin-left: 2px;
-                        height: 1.1em;
-                        // max-width: 6em;
-                        vertical-align: -0.15em;
-                        display: inline-block;
-                        img{
-                            width: 100%;
-                            height: 100%;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     .create-link{
         border-radius: 4px;
         margin-top: 10px;
@@ -1195,7 +1167,7 @@ export default {
             justify-content: space-between;
             display: flex;
             padding: 15px 10px;
-            .title{
+            .link-title{
                 line-height: 18px;
                 font-size: 16px;
                 font-weight: 600;
@@ -1256,16 +1228,36 @@ export default {
                     font-size: 13px;
                 }
             }
+            .not-allowed{
+                cursor: not-allowed;
+            }
         }
-        .create-btn{
-            user-select: none;
-            cursor: pointer;
-            background: #1e80ff;
-            color: #fff;
-            text-align: center;
-            font-size: 13px;
-            padding: 10px 15px;
-            border-radius: 4px;
+        .create-btn-auth{
+            display: flex;
+            align-items: center;
+            .create-auth{
+                display: flex;
+                align-items: center;
+                margin-right: 20px;
+                cursor: pointer;
+                user-select: none;
+                .icon{
+                    margin-right: 5px;
+                }
+                .text{
+                    font-size: 12px;
+                }
+            }
+            .create-btn{
+                user-select: none;
+                cursor: pointer;
+                background: #1e80ff;
+                color: #fff;
+                text-align: center;
+                font-size: 13px;
+                padding: 10px 15px;
+                border-radius: 4px;
+            }
         }
         .link-panel{
             position: absolute;
@@ -1349,6 +1341,84 @@ export default {
                     }
                     .link-empty{
                         margin-top: 10px;
+                    }
+                }
+            }
+        }
+        .auth-panel{
+            position: absolute;
+            width: 620px;
+            border-radius: 4px;
+            background-color: white;
+            padding: 10px;
+            top: 35px;
+            right: 0px;
+            border: 1px solid #eaeaea;
+            .popper-arrow{
+                right: 120px;
+                background-color: white;
+                border-left-color: transparent;
+                border-bottom-color: transparent;
+                border-right-color: #e4e6eb;
+                border-top-color: #e4e6eb;
+                width: 8px;
+                height: 8px;
+                border-width: 1px;
+                border-style: solid;
+                transform: rotate(-45deg);
+                position: absolute;
+                top: -4px;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+            .popover-content{
+                position: relative;
+                .auth-options{
+                    display: flex;
+                    align-items: center;
+                    .auth-item{
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        font-size: 12px;
+                        padding: 8px;
+                        cursor: pointer;
+                        user-select: none;
+                        .icon{
+                            margin-right: 5px;
+                        }
+                    }
+                    .active::after{
+                        background: #0066ff;
+                        content: '';
+                        width: 40px;
+                        height: 2px;
+                        border-radius: 5px;
+                        bottom: 0px;
+                        position: absolute;
+                        margin-left: auto;
+                        margin-right: auto;
+                        left: 0;
+                        right: 0;
+                        text-align: center;
+                    }
+                }
+                .auth-desc{
+                    color: @font-desc-color;
+                    font-size: @font-small;
+                    margin-top: 10px;
+                    padding: 10px;
+                    border-radius: 4px;
+                    background: @bg-blue-main;
+                    .price{
+                        margin-bottom: 10px;
+                        /deep/ .ant-input-number{
+                            resize : none;
+                            border: 0;
+                            outline: none;
+                            -webkit-box-shadow: none !important;
+                            box-shadow: none !important;
+                        }
                     }
                 }
             }

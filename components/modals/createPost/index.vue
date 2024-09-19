@@ -50,7 +50,8 @@
                                         <div class="search">
                                             <a-input-search 
                                             placeholder="请输入版块标题" style="width: 100%" 
-                                            @change="onSearch"
+                                            @search="onSearch"
+                                            @change="onchangeForumSearch"
                                             v-model="forumSearchText"
                                             />
                                         </div>
@@ -228,7 +229,10 @@
                     <div v-if="openLink" class="link-panel">
                         <div class="popover-content">
                             <div class="text-input">
-                                <a-input-search style="width: 100%" v-model="linkSearchText" placeholder="输入标题"  size="large" @search="onLinkSearch">
+                                <a-input-search style="width: 100%" v-model="linkSearchText" placeholder="输入标题"  size="large" 
+                                @search="onLinkSearch"
+                                @change="changeLinkSearch"
+                                >
                                     <a-button slot="enterButton">
                                         搜索
                                     </a-button>
@@ -391,7 +395,6 @@ export default {
             locale: zhCN,
             isTrue: false,
             state: null, // 准备（prepare） 确定（ ascertain） 取消（cancel）
-        
             loading: false,
             
             categoryList: [],
@@ -608,12 +611,16 @@ export default {
             this.categoryKey = e
             if (e == 0 && id == 0) {
                 let params = {
+                    page:1,
+                    limit: 50,
                     isTop: 2,
                 }
                 this.getForum(params)
             }
             if (e == 1 && id == 0) {
                 let params = {
+                    page:1,
+                    limit: 50,
                     isJoin: true,
                 }
                 this.getForum(params)
@@ -621,6 +628,8 @@ export default {
 
             if (id != 0) {
                 let params = {
+                    page:1,
+                    limit: 50,
                     categoryId: id,
                 }
                 this.getForum(params)
@@ -638,6 +647,8 @@ export default {
             if (this.openForum) {
                 let params = {
                     isTop: 2,
+                    page:1,
+                    limit: 50,
                 }
                 this.getForum(params)
             }
@@ -648,19 +659,26 @@ export default {
             this.openForum = !this.openForum
         },
         onSearch(){
+            if (this.forumSearchText != "") {
+                this.forumIsSearch = true
+                let params = {
+                    page:1,
+                    limit: 50,
+                    title: this.forumSearchText,
+                }
+                this.getForum(params)
+            }
+        },
+        onchangeForumSearch(){
             if (this.forumSearchText == "") {
                 this.categoryKey = 0
                 let params = {
                     isTop: 2,
+                    page:1,
+                    limit: 50,
                 }
                 this.getForum(params)
                 this.forumIsSearch = false
-            }else{
-                this.forumIsSearch = true
-                let params = {
-                    title: this.forumSearchText,
-                }
-                this.getForum(params)
             }
         },
         
@@ -709,10 +727,23 @@ export default {
                             limit: 10,
                         }
                         this.getArticle(params)
-                    }else{
-                        this.linkList = []
                     }
-                    
+                    break;
+                default:
+                    break;
+            }
+        },
+        changeLinkSearch(){
+            switch (this.module) {
+                case "article":
+                    if (this.linkSearchText == "") {
+                        let params = {
+                            title: "",
+                            page: 1,
+                            limit: 10,
+                        }
+                        this.getArticle(params)
+                    }
                     break;
                 default:
                     break;
@@ -1252,105 +1283,6 @@ export default {
                                     justify-content: center;
                                     margin-right: 10px;
                                     font-size: 12px;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                .create-resouce{
-                    margin-top: 20px;
-                    /deep/ .ant-input{
-                        resize : none;
-                        border: 0;
-                        outline: none;
-                        -webkit-box-shadow: none !important;
-                        box-shadow: none !important;
-                        background-color: #fafafa;
-                    }
-                    /deep/ .ant-input-number{
-                        resize : none;
-                        border: 0;
-                        outline: none;
-                        -webkit-box-shadow: none !important;
-                        box-shadow: none !important;
-                        background-color: #fafafa;
-                    }
-                    .mode{
-                        margin-top: 20px;
-                    }
-                    .rescource-box{
-                        margin: 20px 0;
-                        .text{
-                            font-size: 12px;
-                            font-weight: 900;
-                            color: #999;
-                            margin-bottom: 10px;
-                        }
-                        .attr-list{
-                            .item{
-                                display: flex;
-                                align-items: center;
-                                margin-bottom: 10px;
-                                .input{
-                                    flex: 1;
-                                }
-                                .action{
-                                    margin-left: 20px;
-                                }
-                            } 
-                        }
-                    }
-                    .grade{
-                        .grade-list{
-                            display: flex;
-                            align-items: center;
-                            .grade-item{
-                                margin-right: 20px;
-                                display: flex;
-                                align-items: center;
-                                .x-input[type=radio]{
-                                    border-radius: 50%;
-                                    border: 1px solid #1890ff;
-                                    border-radius: 3px;
-                                    background: #1890ff;
-                                    clear: none;
-                                    cursor: pointer;
-                                    display: inline-block;
-                                    line-height: 0;
-                                    height: 1em;
-                                    outline: 0;
-                                    padding: 0 !important;
-                                    text-align: center;
-                                    width: 1em;
-                                    min-width: 1em;
-                                    box-shadow: inset 0 2px 2px rgba(0,0,0,.1);
-                                    transition: border-color .3s, background .3s, opacity .2s;
-                                    vertical-align: -0.15em;
-                                    position: relative;
-                                }
-                                .x-input[type=radio]::before{
-                                    content: '';
-                                    border-radius: 50%;
-                                    width: 0.5em;
-                                    height: 0.5em;
-                                    margin: 0.18em;
-                                    background-color:#1890ff;
-                                    line-height: 1.14285714;
-                                    float: left;
-                                    opacity: 0;
-                                    transition: opacity .2s;
-                                }
-                                .lavel{
-                                    margin-left: 2px;
-                                    height: 1.1em;
-                                    // max-width: 6em;
-                                    vertical-align: -0.15em;
-                                    display: inline-block;
-                                    img{
-                                        width: 100%;
-                                        height: 100%;
-                                    }
                                 }
                             }
                         }

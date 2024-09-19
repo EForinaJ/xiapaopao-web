@@ -25,7 +25,8 @@
                 </div>
             </div>
             <div class="right">
-                <Anthor @follow="follow" :info="info.userInfo"/>
+                <Anthor 
+                 :info="info.userInfo"/>
                 <HotPost />
             </div>
         </div>

@@ -36,10 +36,27 @@
                     </a-dropdown>
                 </div>
             </div>
-            <div @click="goPath(`/post/${info.id}`)" v-if="info.title != ''" class="title">
+            <div 
+                v-if="info.authority == 1"
+                @click="goPath(`/post/${info.id}`)"  
+                class="title"
+            >
+                {{info.title != "" ? info.title : info.content}}
+            </div>
+            <div 
+               v-if="info.authority != 1"
+                @click="goPath(`/post/${info.id}`)"  
+                class="title"
+            >
                 {{info.title}}
             </div>
-            <div @click="goPath(`/post/${info.id}`)" v-if="info.content != ''" class="content">
+
+
+            <div
+                @click="goPath(`/post/${info.id}`)" 
+                v-if="info.content != '' && info.isView" 
+                class="content"
+            >
                 <!-- <span class="topic">
                     <FIcon class="icon" :size="12" type="icon-huati1"/>
                     <span>话题</span>
@@ -49,17 +66,95 @@
                     {{info.content}}
                 </span>
             </div>
-            <div v-if="info.images.length > 0" class="images">
+
+            <div v-if="info.images.length > 0 && info.isView" class="images">
                 <ImageAdaptation :list="info.images"/>
             </div>
-            <div @click="goPath(`/post/${info.id}`)" v-if="info.setResource == 2" class="resource">
-                <div class="icon">
-                    <FIcon :size="18" type="icon-xiazai"/>
+
+            <div 
+                v-if="!info.isView" 
+                class="resource"
+            >
+                <div class="desc-text">
+                    <div class="icon">
+                        <FIcon :size="14" type="icon-lock1-copy"/>
+                    </div>
+                    <div class="text">
+                        该帖子部分内容已隐藏
+                    </div>
                 </div>
-                <div class="text">
-                    查看资源
+                <div v-if="info.authority == 2" class="hide-c">
+                    <a-divider>登录后刷新查看</a-divider>
+                    <div class="act">
+                        <div @click="login" class="btn">
+                            登录
+                        </div>
+                    </div>
+                </div>
+                <div v-if="info.authority == 3" class="hide-c">
+                    <a-divider>评论后继续查看</a-divider>
+                    <div class="act">
+                        <div @click="goPath(`/post/${info.id}?#comment`)" class="btn">
+                            评论
+                        </div>
+                    </div>
+                </div>
+                <div v-if="info.authority == 4" class="hide-info">
+                    <div class="info">
+                        <div class="price">
+                            <span class="ot">$</span>
+                            <span class="text">
+                                {{info.authorityDetail.price}}
+                            </span>
+                        </div>
+                        <div class="action">
+                            <div class="count">
+                                此内容为付费阅读，请付费后查看
+                            </div>
+                            <div @click="pay" class="btn">
+                                立即购买
+                            </div>
+                        </div>
+                    </div>
+                    <div class="num">
+                        已售{{info.authorityDetail.count | resetNum}}
+                    </div>
+                    <div class="type">
+                        付费阅读
+                    </div>
+                </div>
+                <div v-if="info.authority == 5" class="hide-info">
+                    <div class="info">
+                        <div class="integral">
+                            <span class="ot">
+                                <FIcon :size="14" type="icon-jifen-copy"/>
+                            </span>
+                            <span class="text">
+                                {{info.authorityDetail.integral}}
+                            </span>
+                            <span>
+                                积分
+                            </span>
+                        </div>
+                        <div class="action">
+                            <div class="count">
+                                此内容为积分兑换，请兑换后查看
+                            </div>
+                            <div @click="exchange" class="btn in">
+                                立即兑换
+                            </div>
+                        </div>
+                    </div>
+                    <div class="num">
+                        已售{{integralCount}}
+                    </div>
+                    <div class="type">
+                        付费阅读
+                    </div>
                 </div>
             </div>
+
+
             <div class="footer">
                 <div @click="goPath(`/forum/${info.forum.id}`)" v-if="info.forum != null" class="forum">
                     <FIcon class="icon" :size="16" type="icon-a-faxianquanzi"/>
@@ -129,6 +224,52 @@ export default {
     methods:{
         goPath(path){
             this.$router.push(path)
+        },
+        login(){
+            if (this.token == null) {
+                this.$Auth("login","登录","快速登录")
+                return
+            }
+        },
+
+        pay(){
+            const product = {
+                detailId: this.info.id,
+                detailModule:"post",
+                orderMoney: this.info.authorityDetail.price,
+                orderType: 3,
+            }
+
+            this.$Pay("支付帖子隐藏内容",product).then(async (res)=>{
+                this.goPath(`/post/${this.info.id}`)
+            }).catch((err)=>{
+                (err)
+                // this.createForm.cover = undefined
+            })
+        },
+        exchange(){
+            this.$confirm({
+                title: '使用积分',
+                okText:"确定",
+                cancelText:"取消",
+                onOk:async () => {
+                    const query = {
+                        id:this.info.id
+                    }
+                    const res = await this.$axios.post(api.postPostExchange,query) 
+                    if (res.code != 1) {
+                        this.$message.error(
+                            res.message,
+                            3
+                        )
+                        return
+                    }
+                    this.goPath(`/post/${this.info.id}`)
+                },
+                onCancel() {
+
+                },
+            });
         },
         async like(){
             if (this.token == null) {
@@ -307,36 +448,121 @@ export default {
             margin-bottom: 10px;
         }
         .resource{
-            display: flex;
+            background: rgba(0, 0, 0, 0.03);
+            padding: 10px;
+            border-radius: 4px;
             margin-bottom: 10px;
-            cursor: pointer;
-            align-items: center;
-            width: 200px;
-            background: #e1edff;
-            border-top-right-radius: 4px;
-            border-bottom-right-radius: 4px;
-            border-top-left-radius: 4px;
-            border-bottom-left-radius: 4px;
-            .icon{
-                border-top-left-radius: 4px;
-                border-bottom-left-radius: 4px;
-                background: #4289fa;
+            .desc-text{
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                height: 40px;
-                width: 40px;
+                .icon{
+                    margin-right: 5px;
+                }
+                .text{
+                    font-size: @font-normal;
+                    color: @font-desc-color;
+                }
             }
-            .text{
-                margin: 10px;
-                flex: 1;
-                cursor: pointer;
-                display: -webkit-box;
-                font-size: 12px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                -webkit-line-clamp: 1;
-                -webkit-box-orient: vertical;
+            .hide-info{
+                margin-top: 10px;
+                border-radius: 4px;
+                background: #fff;
+                padding: 15px;
+                position: relative;
+                .info{
+                    margin-top: 20px;
+                    // display: flex;
+                    .price{
+                        color: #ff5473;
+                        font-size: 12px;
+                        font-weight: 700;
+                        line-height: 1.4;
+                        .ot{
+                           margin-right: 1px;
+                        }
+                        .text{
+                            font-size: 3em;
+                        }
+                    }
+                    .integral{
+                        color: #ff6f06;
+                        font-size: 12px;
+                        font-weight: 700;
+                        line-height: 1.4;
+                        .ot{
+                           margin-right: 1px;
+                        }
+                        .text{
+                            font-size: 3em;
+                        }
+                    }
+                    .action{
+                        display: flex;
+                        align-items: center;
+                        .count{
+                            flex: 1;
+                            font-size: @font-small;
+                        }
+                        .btn{
+                            user-select: none;
+                            cursor: pointer;
+                            border-radius: 4px;
+                            color: white;
+                            padding: .5em 3em;
+                            background:  linear-gradient(135deg, #fd7a64 10%, #fb2d2d 100%);
+                        }
+                        .in{
+                             background:linear-gradient(135deg, #f59f54 10%, #ff6922 100%);
+                        }
+                    }
+                }
+                .num{
+                    color: #fff;
+                    position: absolute;
+                    font-size: @font-small;
+                    top: .6em;
+                    right: 0;
+                    border-radius: 50px 0 0 50px;
+                    text-shadow: none;
+                    box-shadow: 0 1px 5px rgba(0, 0, 0, .2);
+                    z-index: 1;
+                    margin-top: 6px;
+                    padding: .25em .6em;
+                    background: linear-gradient(135deg, #60e464 10%, #5cb85b 100%);
+                }
+                .type{
+                    position: absolute;
+                    transform: translateY(-50%);
+                    font-size: 13px;
+                    padding: 3px 10px;
+                    right: auto;
+                    left: 0px;
+                    width: auto;
+                    top: 10px;
+                    color: #fff;
+                    border-radius: 4px 0 4px 0;
+                    line-height: 1.4;
+                    z-index: 1;
+                    background: linear-gradient(135deg, #ff74cd 10%, #ec7d0b 100%);
+                }
+            }
+            .hide-c{
+                .act{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    .btn{
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: .6em 1.4em !important;
+                        cursor: pointer;
+                        color: white;
+                        border-radius: 24px;
+                        font-size: 14px;
+                        background: linear-gradient( 135deg, #3C8CE7 10%, #00EAFF 100%);
+                    }
+                }
             }
         }
         .footer{
